@@ -5,19 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp2"
         mc:Ignorable="d"
-        Title="Window1" Height="450" Width="480.384">
+        Title="Tag Store" Height="450" Width="480.384">
     <Grid Margin="0,0,2,0">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*"/>
-            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <ListBox x:Name="TaglistBox" Margin="24,10,1,10"/>
-        <TextBox x:Name="Tag_Name_Textbox" HorizontalAlignment="Right" Height="23" Margin="0,13,12,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="110" TextChanged="Tag_Name_Textbox_TextChanged" Grid.Column="1"/>
-        <TextBox x:Name="Tag_Image_Textbox" HorizontalAlignment="Right" Height="23" Margin="0,41,44,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="78" Grid.Column="1"/>
+        <ListBox x:Name="TaglistBox" Margin="24,10,1,10" SelectedItem="{Binding Path=selectedTag.name, Mode=TwoWay}"/>
+        <TextBox x:Name="Tag_Name_Textbox" AcceptsReturn="false" Text="{Binding Path=selectedTag.name, Mode=TwoWay}" Height="23" Margin="61,13,7,0" TextWrapping="Wrap" VerticalAlignment="Top" TextChanged="Tag_Name_Textbox_TextChanged" Grid.Column="1"/>
+        <TextBox x:Name="Tag_Image_Textbox" AcceptsReturn="false" Text="{Binding Path=selectedTag.image, Mode=TwoWay}" Height="23" Margin="61,41,39,0" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Column="1"/>
         <Button x:Name="addTagbutton" Content="Add Tag" HorizontalAlignment="Right" Height="24" Margin="0,82,12,0" VerticalAlignment="Top" Width="110" Click="AddTagbutton_Click" IsEnabled="False" Grid.Column="1"/>
-        <Label x:Name="label" Content="Name" HorizontalAlignment="Right" Height="23" Margin="0,13,133,0" VerticalAlignment="Top" Width="44" Grid.Column="1"/>
-        <Label x:Name="label_Copy" Content="Image" HorizontalAlignment="Right" Height="33" Margin="0,41,127,0" VerticalAlignment="Top" Width="50" Grid.Column="1"/>
-        <Button x:Name="Search_Image_Button" Content="..." Grid.Column="1" HorizontalAlignment="Right" Height="23" Margin="0,41,12,0" VerticalAlignment="Top" Width="27" Click="Search_Image_Button_Click"/>
+        <Label x:Name="label" Content="Name" HorizontalAlignment="Left" Height="23" Margin="0,13,0,0" VerticalAlignment="Top" Width="44" Grid.Column="1"/>
+        <Label x:Name="label_Copy" Content="Image" HorizontalAlignment="Left" Height="33" Margin="0,41,0,0" VerticalAlignment="Top" Width="50" Grid.Column="1"/>
+        <Button x:Name="Search_Image_Button" Content="..." Grid.Column="1" HorizontalAlignment="Right" Height="23" Margin="0,42,7,0" VerticalAlignment="Top" Width="27" Click="Search_Image_Button_Click"/>
 
     </Grid>
 </Window>

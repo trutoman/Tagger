@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,10 +23,32 @@ namespace WpfApp2
     /// <summary>
     /// Interaction logic for Window1.xaml
     /// </summary>
-    public partial class Window1 : Window
+    public partial class Window1 : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+
+        private TagStoreElementTag _selectedTag; 
+        public TagStoreElementTag selectedTag
+        {
+            get { return _selectedTag; }
+            set
+            {
+                if (_selectedTag != value)
+                {
+                    _selectedTag = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public Window1()
         {
+            DataContext = this;
             InitializeComponent();
             Populate_Tag_Window();
         }
@@ -48,39 +72,40 @@ namespace WpfApp2
         private void AddTagbutton_Click(object sender, RoutedEventArgs e)
         {
             int count = 0;
-            bool exists = false;
+            bool finish = false;
             int tag_Store_Length = MainWindow.CONFIGURATION.tagStore.Length;
 
             TagStoreElementTag[] new_Store = new TagStoreElementTag[tag_Store_Length + 1];
 
             TagStoreElementTag element = new TagStoreElementTag();
             element.name = Tag_Name_Textbox.Text;
-            element.group = "common";
+            //element.group = Tag_Name_Group.Text;
             element.image = Tag_Image_Textbox.Text;
 
             foreach (var item in MainWindow.CONFIGURATION.tagStore)
             {
-                if (item != null)
+                if (item.name == element.name)
                 {
-                    if (item.name == element.name)
+                    DialogResult dialogResult = System.Windows.Forms.MessageBox.Show("Tag " + element.name + " already exists", "Overwrite", MessageBoxButtons.YesNo);
+                    if (dialogResult == System.Windows.Forms.DialogResult.Yes)
                     {
-                        exists = true;
-                        break;
+                        new_Store[count] = element;
                     }
+                    finish = true;
+                }
+                else
+                {
                     new_Store[count] = item;
                 }
                 count++;
             }
-            if (!exists)
+
+            if (!finish)
             {
-                new_Store[tag_Store_Length] = element;
-                MainWindow.CONFIGURATION.tagStore = new_Store;
-                Populate_Tag_Window();
+                new_Store[count] = element;
             }
-            else
-            {
-                System.Windows.MessageBox.Show("Tag " + element.name + " already exists");
-            }           
+            MainWindow.CONFIGURATION.tagStore = new_Store;
+            Populate_Tag_Window();
         }
 
         private void Tag_Name_Textbox_TextChanged(object sender, TextChangedEventArgs e)

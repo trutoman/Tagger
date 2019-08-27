@@ -77,14 +77,7 @@ namespace WpfApp2
         }
         private bool exists_Configuration(string path)
         {
-            if (File.Exists(System.IO.Path.Combine(path, CONFIG_FILENAME)))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return (File.Exists(System.IO.Path.Combine(path, CONFIG_FILENAME)));           
         }
 
         private void load_Configuration(string config_file)

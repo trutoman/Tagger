@@ -30,7 +30,7 @@
             </DataGrid.Columns>
         </DataGrid>
         <DataGrid x:Name="dataGrid1" Margin="23,0,0,18" VerticalAlignment="Bottom" Height="67" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
-        <Button x:Name="add_tag_button" Content="Add Tag" Grid.Column="1" HorizontalAlignment="Right" Height="21" Margin="0,50,10,0" VerticalAlignment="Top" Width="77" Click="Add_tag_button_Click"/>
+        <Button x:Name="add_tag_button" Content="Edit Tag Store" Grid.Column="1" HorizontalAlignment="Right" Height="21" Margin="0,50,10,0" VerticalAlignment="Top" Width="96" Click="Add_tag_button_Click"/>
         <Button x:Name="Save_Configuration_Button" Content="Save" HorizontalAlignment="Right" Height="20" Margin="0,24,35,0" VerticalAlignment="Top" Width="59" Click="Save_Configuration_Button_Click"/>
 
     </Grid>
