@@ -1,0 +1,48 @@
+﻿<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://tempuri.org/TaggerConfiguration.xsd"
+           targetNamespace="http://tempuri.org/TaggerConfiguration.xsd"
+           elementFormDefault="qualified">
+
+  <xsd:element name="TaggerConfig" type="tns:RootElement"/>
+
+  <xsd:complexType name="RootElement">
+    <xsd:sequence>
+      <xsd:element name="rootDir" type="xsd:string"/>
+      <xsd:element name="numFiles" type="xsd:integer"/>
+      <xsd:element name="file" type="tns:FileListElement" maxOccurs="unbounded"/>
+      <xsd:element name="tagStore" type="tns:TagStoreElement" minOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="FileListElement">
+    <xsd:sequence>
+      <xsd:element name="name" type="xsd:string"/>
+      <xsd:element name="path" type="xsd:string"/>
+      <xsd:element name="tags">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="name" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="checksum" type="xsd:string"/>
+      <xsd:element name="size" type="xsd:integer"/>
+      <xsd:element name="tagged" type="xsd:boolean"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="TagStoreElement">
+    <xsd:sequence>
+      <xsd:element name="tag" maxOccurs="unbounded">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="name" type="xsd:string"/>
+          </xsd:sequence>
+          <xsd:attribute name='group' type='xsd:string'/>
+          <xsd:attribute name='image' type='xsd:string'/>          
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+</xsd:schema>
