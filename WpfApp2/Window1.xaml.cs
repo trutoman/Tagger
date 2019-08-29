@@ -32,7 +32,7 @@ namespace WpfApp2
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private TagStoreElementTag _selectedTag; 
+        private TagStoreElementTag _selectedTag;
         public TagStoreElementTag selectedTag
         {
             get { return _selectedTag; }
@@ -66,8 +66,13 @@ namespace WpfApp2
         public Window1()
         {
             DataContext = this;
+
+            Array.Sort<TagStoreElementTag>(MainWindow.CONFIGURATION.tagStore, (x, y) => String.Compare(x.name, y.name,
+                                     StringComparison.CurrentCultureIgnoreCase));
+            //Array.Sort(MainWindow.CONFIGURATION.tagStore, (x, y) => String.Compare(x.name, y.name));
             InitializeComponent();
-           // Populate_Tag_Window();
+
+            // Populate_Tag_Window();
         }
 
         //private void Populate_Tag_Window()
@@ -90,42 +95,35 @@ namespace WpfApp2
         {
             int count = 0;
             bool finish = false;
-            int tag_Store_Length = MainWindow.CONFIGURATION.tagStore.Length;
-
-            TagStoreElementTag[] new_Store = new TagStoreElementTag[tag_Store_Length + 1];
 
             TagStoreElementTag element = new TagStoreElementTag();
             element.name = Tag_Name_Textbox.Text;
-            //element.group = Tag_Name_Group.Text;
+            element.group = Tag_Name_Group.Text;
             element.image = Tag_Image_Textbox.Text;
 
             foreach (var item in MainWindow.CONFIGURATION.tagStore)
             {
-                if (item != null)
+                if (item.name == element.name)
                 {
-                    if (item.name == element.name)
+                    DialogResult dialogResult = 
+                        System.Windows.Forms.MessageBox.Show("Tag " + element.name + " already exists \nDo you want to overwrite it?", "Tag already exists", 
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+                    if (dialogResult == System.Windows.Forms.DialogResult.Yes)
                     {
-                        DialogResult dialogResult = System.Windows.Forms.MessageBox.Show("Tag " + element.name + " already exists", "Overwrite", MessageBoxButtons.YesNo);
-                        if (dialogResult == System.Windows.Forms.DialogResult.Yes)
-                        {
-                            new_Store[count] = element;
-                        }
-                        finish = true;
+                        MainWindow.CONFIGURATION.tagStore[count] = element;
                     }
-                    else
-                    {
-                        new_Store[count] = item;
-                    }
-                    count++;
+                    finish = true;
                 }
+                count++;
             }
 
             if (!finish)
             {
-                new_Store[count] = element;
+                List<TagStoreElementTag> auxList = new List<TagStoreElementTag>(MainWindow.CONFIGURATION.tagStore);
+                auxList.Add(element);
+                MainWindow.CONFIGURATION.tagStore = auxList.ToArray();
             }
-            MainWindow.CONFIGURATION.tagStore = new_Store;
-            //Populate_Tag_Window();
         }
 
         private void Tag_Name_Textbox_TextChanged(object sender, TextChangedEventArgs e)
