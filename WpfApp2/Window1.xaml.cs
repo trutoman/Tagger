@@ -60,6 +60,20 @@ namespace WpfApp2
                 }
                 return _tagList;
             }
+            //set
+            //{
+            //    _tagList = value;
+            //    OnPropertyChanged("tagList");
+            //}
+
+            set
+            {
+                if (_tagList != value)
+                {
+                    _tagList = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
 
@@ -93,7 +107,6 @@ namespace WpfApp2
 
         private void AddTagbutton_Click(object sender, RoutedEventArgs e)
         {
-            int count = 0;
             bool finish = false;
 
             TagStoreElementTag element = new TagStoreElementTag();
@@ -101,17 +114,17 @@ namespace WpfApp2
             element.group = Tag_Name_Group.Text;
             element.image = Tag_Image_Textbox.Text;
 
-            foreach (var item in MainWindow.CONFIGURATION.tagStore)
+            for (int count = 0; count < tagList.Count; count++)
             {
-                if (item.name == element.name)
+                if (tagList[count].name == element.name)
                 {
-                    DialogResult dialogResult = 
-                        System.Windows.Forms.MessageBox.Show("Tag " + element.name + " already exists \nDo you want to overwrite it?", "Tag already exists", 
+                    DialogResult dialogResult =
+                        System.Windows.Forms.MessageBox.Show("Tag " + element.name + " already exists \nDo you want to overwrite it?", "Tag already exists",
                         MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
                     if (dialogResult == System.Windows.Forms.DialogResult.Yes)
                     {
-                        MainWindow.CONFIGURATION.tagStore[count] = element;
+                        tagList[count] = element;
                     }
                     finish = true;
                 }
@@ -120,9 +133,9 @@ namespace WpfApp2
 
             if (!finish)
             {
-                List<TagStoreElementTag> auxList = new List<TagStoreElementTag>(MainWindow.CONFIGURATION.tagStore);
-                auxList.Add(element);
-                MainWindow.CONFIGURATION.tagStore = auxList.ToArray();
+                tagList.Add(element);
+                tagList.OrderBy(n => n.name);
+                MainWindow.CONFIGURATION.tagStore = tagList.ToArray();
             }
         }
 
