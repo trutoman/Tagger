@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -31,7 +32,6 @@ namespace WpfApp2
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-
         private TagStoreElementTag _selectedTag; 
         public TagStoreElementTag selectedTag
         {
@@ -46,28 +46,45 @@ namespace WpfApp2
             }
         }
 
+        private ObservableCollection<TagStoreElementTag> _tagList = new ObservableCollection<TagStoreElementTag>();
+        public ObservableCollection<TagStoreElementTag> tagList
+        {
+            get
+            {
+                if (_tagList.Count <= 0)
+                {
+                    foreach (var item in MainWindow.CONFIGURATION.tagStore)
+                    {
+                        _tagList.Add(item);
+                    }
+                }
+                return _tagList;
+            }
+        }
+
+
         public Window1()
         {
             DataContext = this;
             InitializeComponent();
-            Populate_Tag_Window();
+           // Populate_Tag_Window();
         }
 
-        private void Populate_Tag_Window()
-        {
-            TaglistBox.Items.Clear();
+        //private void Populate_Tag_Window()
+        //{
+        //    //TaglistBox.Items.Clear();
 
-            if (MainWindow.CONFIGURATION.tagStore != null)
-            {
-                foreach (var item in MainWindow.CONFIGURATION.tagStore)
-                {
-                    if (item != null)
-                    {
-                        TaglistBox.Items.Add(item.name);
-                    }
-                }
-            }
-        }
+        //    if (MainWindow.CONFIGURATION.tagStore != null)
+        //    {
+        //        foreach (var item in MainWindow.CONFIGURATION.tagStore)
+        //        {
+        //            if (item != null)
+        //            {
+        //                TaglistBox.Items.Add(item.name);
+        //            }
+        //        }
+        //    }
+        //}
 
         private void AddTagbutton_Click(object sender, RoutedEventArgs e)
         {
@@ -84,20 +101,23 @@ namespace WpfApp2
 
             foreach (var item in MainWindow.CONFIGURATION.tagStore)
             {
-                if (item.name == element.name)
+                if (item != null)
                 {
-                    DialogResult dialogResult = System.Windows.Forms.MessageBox.Show("Tag " + element.name + " already exists", "Overwrite", MessageBoxButtons.YesNo);
-                    if (dialogResult == System.Windows.Forms.DialogResult.Yes)
+                    if (item.name == element.name)
                     {
-                        new_Store[count] = element;
+                        DialogResult dialogResult = System.Windows.Forms.MessageBox.Show("Tag " + element.name + " already exists", "Overwrite", MessageBoxButtons.YesNo);
+                        if (dialogResult == System.Windows.Forms.DialogResult.Yes)
+                        {
+                            new_Store[count] = element;
+                        }
+                        finish = true;
                     }
-                    finish = true;
+                    else
+                    {
+                        new_Store[count] = item;
+                    }
+                    count++;
                 }
-                else
-                {
-                    new_Store[count] = item;
-                }
-                count++;
             }
 
             if (!finish)
@@ -105,7 +125,7 @@ namespace WpfApp2
                 new_Store[count] = element;
             }
             MainWindow.CONFIGURATION.tagStore = new_Store;
-            Populate_Tag_Window();
+            //Populate_Tag_Window();
         }
 
         private void Tag_Name_Textbox_TextChanged(object sender, TextChangedEventArgs e)
