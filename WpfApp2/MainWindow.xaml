@@ -6,17 +6,36 @@
         xmlns:local="clr-namespace:WpfApp2"
         mc:Ignorable="d"
         Title="Tagger" Height="450" Width="800">
+
+
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <Frame x:Name="tagStore" Content="" HorizontalAlignment="Left" Margin="10,10,0,10" Width="772" Grid.ColumnSpan="2" SnapsToDevicePixels="True" BorderThickness="1,1,1,0" VerticalContentAlignment="Bottom"/>
-        <ListBox x:Name="listboxRoot" Margin="23,76,0,90" SelectionChanged="ListboxRoot_SelectionChanged" MouseDoubleClick="ListboxRoot_MouseDoubleClick"/>
-        <Button x:Name="search_dir_button" Content="..." HorizontalAlignment="Right" Margin="0,24,0,0" VerticalAlignment="Top" Width="30" Click="Search_Dir_Button_Click" Height="20" RenderTransformOrigin="0.528,-1.007"/>
-        <Label x:Name="labelrootpath" Content="" HorizontalAlignment="Left" Margin="23,15,0,0" Width="274" BorderThickness="1" Height="29" VerticalAlignment="Top"/>
-        <Button x:Name="generate_button" Content="Generate Index" HorizontalAlignment="Right" Margin="0,51,0,0" VerticalAlignment="Top" Width="94" Background="#FFDDDDDD" IsEnabled="False" Click="Generate_Button_Click" Height="20"/>
-        <DataGrid x:Name="tag_grid" Grid.Column="1" Margin="10,76,10,18" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ItemsSource="{Binding}" IsReadOnly="True" AutoGenerateColumns="False">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="78" />
+            <RowDefinition Height="247*" />
+            <RowDefinition Height="94*" />
+        </Grid.RowDefinitions>
+
+
+
+        <Button Grid.Column="0" Grid.Row="0" x:Name="search_dir_button"  Margin="23, 10,0,0" VerticalAlignment="Top" Click="Search_Dir_Button_Click" Height="41" Width="45" HorizontalAlignment="Left" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
+            <StackPanel Height="32" Width="32" HorizontalAlignment="Center" VerticalAlignment="Center" ScrollViewer.VerticalScrollBarVisibility="Disabled" >
+                <Image Source="folder.png" Cursor="Hand" />
+            </StackPanel>
+        </Button>
+
+        <Button Grid.Column="0" Grid.Row="0" x:Name="Save_Configuration_Button" Content="Save" HorizontalAlignment="Right" Height="20" Margin="0,24,35,0" VerticalAlignment="Top" Width="59" Click="Save_Configuration_Button_Click"/>
+
+        <Label Grid.Column="0" Grid.Row="0" x:Name="labelrootpath" Content="" HorizontalAlignment="Left" Margin="23,57,0,0" Width="363" BorderThickness="1" Height="16" VerticalAlignment="Top" FontSize="11" Padding="0" UseLayoutRounding="True" Background="{x:Null}"/>
+        <Button Grid.Column="0" Grid.Row="0" x:Name="generate_button" Content="Generate Index" HorizontalAlignment="Right" Margin="0,10,0,0" VerticalAlignment="Top" Width="94" Background="#FFDDDDDD" IsEnabled="False" Click="Generate_Button_Click" Height="20"/>
+
+        <ListBox Grid.Column="0" Grid.Row="1" x:Name="listboxRoot" Margin="23,3,7,9" SelectionChanged="ListboxRoot_SelectionChanged" MouseDoubleClick="ListboxRoot_MouseDoubleClick" Panel.ZIndex="-1" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch"/>
+
+        <DataGrid Grid.Column="0" Grid.Row="2" x:Name="dataGrid1" Margin="23,0,7,18" VerticalAlignment="Bottom" Height="67" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+        <DataGrid Grid.Column="1" Grid.Row="1" x:Name="tag_grid" Margin="7,5,10,10" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ItemsSource="{Binding}" IsReadOnly="True" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding name}"/>
                 <DataGridTextColumn Header="Group" Binding="{Binding group}"/>
@@ -29,9 +48,6 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <DataGrid x:Name="dataGrid1" Margin="23,0,0,18" VerticalAlignment="Bottom" Height="67" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
-        <Button x:Name="add_tag_button" Content="Edit Tag Store" Grid.Column="1" HorizontalAlignment="Right" Height="21" Margin="0,50,10,0" VerticalAlignment="Top" Width="96" Click="Add_tag_button_Click"/>
-        <Button x:Name="Save_Configuration_Button" Content="Save" HorizontalAlignment="Right" Height="20" Margin="0,24,35,0" VerticalAlignment="Top" Width="59" Click="Save_Configuration_Button_Click"/>
-
+        <Button Grid.Column="1" Grid.Row="0" x:Name="add_tag_button" Content="Edit Tag Store"  HorizontalAlignment="Right" Height="21" Margin="0,50,10,0" VerticalAlignment="Top" Width="96" Click="Add_tag_button_Click"/>
     </Grid>
 </Window>

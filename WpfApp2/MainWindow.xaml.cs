@@ -160,11 +160,10 @@ namespace WpfApp2
 
         private void Search_Dir_Button_Click(object sender, RoutedEventArgs e)
         {
-            string file_path = string.Empty;
-
+            string file_path = string.Empty;            
             file_path = choose_Folder();
 
-            if (exists_Configuration(file_path))
+            if (exists_Configuration(file_path) && file_path != string.Empty)
             {
                 BASE_DIR = file_path;
                 Environment.CurrentDirectory = (BASE_DIR);
