@@ -32,20 +32,6 @@ namespace WpfApp2
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private TagStoreElementTag _selectedTag;
-        public TagStoreElementTag selectedTag
-        {
-            get { return _selectedTag; }
-            set
-            {
-                if (_selectedTag != value)
-                {
-                    _selectedTag = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
         private ObservableCollection<TagStoreElementTag> _tagList = new ObservableCollection<TagStoreElementTag>();
         public ObservableCollection<TagStoreElementTag> tagList
         {
@@ -76,6 +62,19 @@ namespace WpfApp2
             }
         }
 
+        private TagStoreElementTag _selectedTag;
+        public TagStoreElementTag selectedTag
+        {
+            get { return _selectedTag; }
+            set
+            {
+                if (_selectedTag != value)
+                {
+                    _selectedTag = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         public Window1()
         {
