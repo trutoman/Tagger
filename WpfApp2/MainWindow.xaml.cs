@@ -77,14 +77,7 @@ namespace WpfApp2
         }
         private bool exists_Configuration(string path)
         {
-            if (File.Exists(System.IO.Path.Combine(path, CONFIG_FILENAME)))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return (File.Exists(System.IO.Path.Combine(path, CONFIG_FILENAME)));           
         }
 
         private void load_Configuration(string config_file)
@@ -167,11 +160,10 @@ namespace WpfApp2
 
         private void Search_Dir_Button_Click(object sender, RoutedEventArgs e)
         {
-            string file_path = string.Empty;
-
+            string file_path = string.Empty;            
             file_path = choose_Folder();
 
-            if (exists_Configuration(file_path))
+            if (exists_Configuration(file_path) && file_path != string.Empty)
             {
                 BASE_DIR = file_path;
                 Environment.CurrentDirectory = (BASE_DIR);

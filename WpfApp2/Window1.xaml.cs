@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,66 +24,118 @@ namespace WpfApp2
     /// <summary>
     /// Interaction logic for Window1.xaml
     /// </summary>
-    public partial class Window1 : Window
+    public partial class Window1 : INotifyPropertyChanged
     {
-        public Window1()
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            InitializeComponent();
-            Populate_Tag_Window();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void Populate_Tag_Window()
+        private ObservableCollection<TagStoreElementTag> _tagList = new ObservableCollection<TagStoreElementTag>();
+        public ObservableCollection<TagStoreElementTag> tagList
         {
-            TaglistBox.Items.Clear();
-
-            if (MainWindow.CONFIGURATION.tagStore != null)
+            get
             {
-                foreach (var item in MainWindow.CONFIGURATION.tagStore)
+                if (_tagList.Count <= 0)
                 {
-                    if (item != null)
+                    foreach (var item in MainWindow.CONFIGURATION.tagStore)
                     {
-                        TaglistBox.Items.Add(item.name);
+                        _tagList.Add(item);
                     }
+                }
+                return _tagList;
+            }
+            //set
+            //{
+            //    _tagList = value;
+            //    OnPropertyChanged("tagList");
+            //}
+
+            set
+            {
+                if (_tagList != value)
+                {
+                    _tagList = value;
+                    OnPropertyChanged();
                 }
             }
         }
+
+        private TagStoreElementTag _selectedTag;
+        public TagStoreElementTag selectedTag
+        {
+            get { return _selectedTag; }
+            set
+            {
+                if (_selectedTag != value)
+                {
+                    _selectedTag = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public Window1()
+        {
+            DataContext = this;
+
+            Array.Sort<TagStoreElementTag>(MainWindow.CONFIGURATION.tagStore, (x, y) => String.Compare(x.name, y.name,
+                                     StringComparison.CurrentCultureIgnoreCase));
+            //Array.Sort(MainWindow.CONFIGURATION.tagStore, (x, y) => String.Compare(x.name, y.name));
+            InitializeComponent();
+
+            // Populate_Tag_Window();
+        }
+
+        //private void Populate_Tag_Window()
+        //{
+        //    //TaglistBox.Items.Clear();
+
+        //    if (MainWindow.CONFIGURATION.tagStore != null)
+        //    {
+        //        foreach (var item in MainWindow.CONFIGURATION.tagStore)
+        //        {
+        //            if (item != null)
+        //            {
+        //                TaglistBox.Items.Add(item.name);
+        //            }
+        //        }
+        //    }
+        //}
 
         private void AddTagbutton_Click(object sender, RoutedEventArgs e)
         {
-            int count = 0;
-            bool exists = false;
-            int tag_Store_Length = MainWindow.CONFIGURATION.tagStore.Length;
-
-            TagStoreElementTag[] new_Store = new TagStoreElementTag[tag_Store_Length + 1];
+            bool finish = false;
 
             TagStoreElementTag element = new TagStoreElementTag();
             element.name = Tag_Name_Textbox.Text;
-            element.group = "common";
+            element.group = Tag_Name_Group.Text;
             element.image = Tag_Image_Textbox.Text;
 
-            foreach (var item in MainWindow.CONFIGURATION.tagStore)
+            for (int count = 0; count < tagList.Count; count++)
             {
-                if (item != null)
+                if (tagList[count].name == element.name)
                 {
-                    if (item.name == element.name)
+                    DialogResult dialogResult =
+                        System.Windows.Forms.MessageBox.Show("Tag " + element.name + " already exists \nDo you want to overwrite it?", "Tag already exists",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+                    if (dialogResult == System.Windows.Forms.DialogResult.Yes)
                     {
-                        exists = true;
-                        break;
+                        tagList[count] = element;
                     }
-                    new_Store[count] = item;
+                    finish = true;
                 }
                 count++;
             }
-            if (!exists)
+
+            if (!finish)
             {
-                new_Store[tag_Store_Length] = element;
-                MainWindow.CONFIGURATION.tagStore = new_Store;
-                Populate_Tag_Window();
+                tagList.Add(element);
+                tagList.OrderBy(n => n.name);
+                MainWindow.CONFIGURATION.tagStore = tagList.ToArray();
             }
-            else
-            {
-                System.Windows.MessageBox.Show("Tag " + element.name + " already exists");
-            }           
         }
 
         private void Tag_Name_Textbox_TextChanged(object sender, TextChangedEventArgs e)
