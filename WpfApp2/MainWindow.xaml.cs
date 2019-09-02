@@ -150,6 +150,20 @@ namespace WpfApp2
             DataContext = this;
             this.tagList.CollectionChanged += this.CollectionChangeHandler;
             InitializeComponent();
+
+        }
+
+        private void PopulateTagGrid()
+        {
+            List<List<string>> lsts = new List<List<string>>();
+            lsts.Add(new List<string>());
+
+            foreach (var item in CONFIGURATION.tagStore)
+            {
+                lsts[0].Add(item.image);
+            }
+
+            lst.ItemsSource = lsts;
         }
 
         public string choose_Folder()
@@ -168,7 +182,7 @@ namespace WpfApp2
 
         private void populate_tag_grid()
         {
-            tag_grid.ItemsSource = tagList;
+            //tag_grid.ItemsSource = tagList;
         }
 
         private bool IsFileTagged(string file)
@@ -225,7 +239,6 @@ namespace WpfApp2
 
         private void load_Configuration(string config_file)
         {
-
             try
             {
                 // Create an instance of the XmlSerializer specifying type.
@@ -245,6 +258,7 @@ namespace WpfApp2
             Array.Sort<TagStoreElementTag>(MainWindow.CONFIGURATION.tagStore, (x, y) => String.Compare(x.name, y.name,
                          StringComparison.CurrentCultureIgnoreCase));
             SaveConfigurationButton.IsEnabled = false;
+            PopulateTagGrid();
         }
 
         private string File_Size(string filename)
@@ -373,14 +387,13 @@ namespace WpfApp2
                         }
                         else
                         {
-                            System.Windows.Forms.MessageBox.Show("fd", "Tag " + file.tags[i].name + " found on file " + file.name + " not exists", 
+                            System.Windows.Forms.MessageBox.Show("fd", "Tag " + file.tags[i].name + " found on file " + file.name + " not exists",
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
-                    }                     
+                    }
                 }
             }
         }
-
 
         private void ListboxRoot_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
         {
@@ -412,9 +425,6 @@ namespace WpfApp2
                 System.Windows.Forms.MessageBox.Show(ex.Message);
             }
         }
-
-
-
 
         private void AddTagbutton_Click(object sender, RoutedEventArgs e)
         {

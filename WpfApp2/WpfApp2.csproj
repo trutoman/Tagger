@@ -135,5 +135,14 @@
   <ItemGroup>
     <Resource Include="delete.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="tag.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="UNtag.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="tagOK.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
