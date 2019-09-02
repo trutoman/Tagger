@@ -20,7 +20,7 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Button Height="50" Width="50">
+                        <Button Height="60" Width="60">
                             <Image Source="{Binding}" Cursor="Hand"/>
                         </Button>
                     </DataTemplate>

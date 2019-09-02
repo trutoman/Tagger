@@ -455,7 +455,7 @@ namespace WpfApp2
             {
                 tagList.Add(element);
                 tagList.OrderBy(n => n.name);
-                //MainWindow.CONFIGURATION.tagStore = tagList.ToArray();
+                MainWindow.CONFIGURATION.tagStore = tagList.ToArray();
             }
             SaveConfigurationButton.IsEnabled = true;
             finish = true;
