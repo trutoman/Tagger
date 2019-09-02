@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -46,21 +47,22 @@ namespace WpfApp2
                 }
                 return _tagList;
             }
-            //set
-            //{
-            //    _tagList = value;
-            //    OnPropertyChanged("tagList");
-            //}
-
             set
             {
                 if (_tagList != value)
                 {
                     _tagList = value;
+                    
                     OnPropertyChanged();
                 }
             }
         }
+
+        private void CollectionChangeHandler(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            MainWindow.CONFIGURATION.tagStore = _tagList.ToArray();
+        }
+           
 
         private TagStoreElementTag _selectedTag;
         public TagStoreElementTag selectedTag
@@ -79,6 +81,8 @@ namespace WpfApp2
         public Window1()
         {
             DataContext = this;
+
+            this.tagList.CollectionChanged += this.CollectionChangeHandler;
 
             Array.Sort<TagStoreElementTag>(MainWindow.CONFIGURATION.tagStore, (x, y) => String.Compare(x.name, y.name,
                                      StringComparison.CurrentCultureIgnoreCase));
@@ -127,15 +131,15 @@ namespace WpfApp2
                     }
                     finish = true;
                 }
-                count++;
             }
 
             if (!finish)
             {
                 tagList.Add(element);
                 tagList.OrderBy(n => n.name);
-                MainWindow.CONFIGURATION.tagStore = tagList.ToArray();
+                //MainWindow.CONFIGURATION.tagStore = tagList.ToArray();
             }
+            finish = true;
         }
 
         private void Tag_Name_Textbox_TextChanged(object sender, TextChangedEventArgs e)

@@ -18,7 +18,7 @@
     <xsd:sequence>
       <xsd:element name="name" type="xsd:string"/>
       <xsd:element name="path" type="xsd:string"/>
-      <xsd:element name="tags">
+      <xsd:element name="tags" maxOccurs="unbounded">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="name" type="xsd:string"/>
@@ -27,7 +27,6 @@
       </xsd:element>
       <xsd:element name="checksum" type="xsd:string"/>
       <xsd:element name="size" type="xsd:integer"/>
-      <xsd:element name="tagged" type="xsd:boolean"/>
     </xsd:sequence>
   </xsd:complexType>
 

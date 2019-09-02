@@ -133,5 +133,14 @@
   <ItemGroup>
     <Resource Include="folder.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="verification.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="delete.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

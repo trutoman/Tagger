@@ -5,8 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp2"
         mc:Ignorable="d"
-        Title="Tagger" Height="450" Width="800">
-
+        Title="Tagger" Height="500" Width="1040">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -16,25 +15,134 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="78" />
             <RowDefinition Height="247*" />
-            <RowDefinition Height="94*" />
+            <RowDefinition Height="120" />
         </Grid.RowDefinitions>
 
+        <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Vertical" Margin="16, 10,0,0" >
+            <StackPanel Orientation="Horizontal">
+                <StackPanel.Resources>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Margin" Value="0,10,10,0"/>
+                    </Style>
+                </StackPanel.Resources>
+                <Button Grid.Column="0" Grid.Row="0" x:Name="search_dir_button"  
+ 
+                VerticalAlignment="Top" 
+                Click="Search_Dir_Button_Click" 
+                Height="41" Width="45" 
+                HorizontalAlignment="Left" 
+                VerticalContentAlignment="Stretch"
+                HorizontalContentAlignment="Stretch">
+                    <StackPanel 
+                Height="32" 
+                Width="32" 
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                ScrollViewer.VerticalScrollBarVisibility="Disabled" >
+                        <Image Source="folder.png" Cursor="Hand" HorizontalAlignment="Left" Width="32" />
+                    </StackPanel>
+                </Button>
 
+                <Button Grid.Column="0" Grid.Row="0" x:Name="SaveConfigurationButton"  
 
-        <Button Grid.Column="0" Grid.Row="0" x:Name="search_dir_button"  Margin="23, 10,0,0" VerticalAlignment="Top" Click="Search_Dir_Button_Click" Height="41" Width="45" HorizontalAlignment="Left" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
-            <StackPanel Height="32" Width="32" HorizontalAlignment="Center" VerticalAlignment="Center" ScrollViewer.VerticalScrollBarVisibility="Disabled" >
-                <Image Source="folder.png" Cursor="Hand" />
+                VerticalAlignment="Top" 
+                Click="SaveConfigurationButtonClick" 
+                Height="41" Width="45" 
+                HorizontalAlignment="Left" 
+                VerticalContentAlignment="Stretch"
+                HorizontalContentAlignment="Stretch">
+                    <StackPanel 
+                Height="32" 
+                Width="32" 
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                ScrollViewer.VerticalScrollBarVisibility="Disabled" >
+                        <Image Source="save.png" Cursor="Hand" HorizontalAlignment="Left" Width="32" />
+                    </StackPanel>
+                </Button>
             </StackPanel>
-        </Button>
+            <StackPanel Orientation="Horizontal" Height="17">
+                <Label Grid.Column="0" Grid.Row="0" x:Name="labelrootpath" 
+                       Content="" 
+                       HorizontalAlignment="Left" 
+                       Width="500"
+                       BorderThickness="1" 
+                       Height="16" 
+                       VerticalAlignment="Top" 
+                       FontSize="11" 
+                       Padding="0" 
+                       UseLayoutRounding="True" 
+                       Background="{x:Null}"/>
+            </StackPanel>
+        </StackPanel>
 
-        <Button Grid.Column="0" Grid.Row="0" x:Name="Save_Configuration_Button" Content="Save" HorizontalAlignment="Right" Height="20" Margin="0,24,35,0" VerticalAlignment="Top" Width="59" Click="Save_Configuration_Button_Click"/>
 
-        <Label Grid.Column="0" Grid.Row="0" x:Name="labelrootpath" Content="" HorizontalAlignment="Left" Margin="23,57,0,0" Width="363" BorderThickness="1" Height="16" VerticalAlignment="Top" FontSize="11" Padding="0" UseLayoutRounding="True" Background="{x:Null}"/>
-        <Button Grid.Column="0" Grid.Row="0" x:Name="generate_button" Content="Generate Index" HorizontalAlignment="Right" Margin="0,10,0,0" VerticalAlignment="Top" Width="94" Background="#FFDDDDDD" IsEnabled="False" Click="Generate_Button_Click" Height="20"/>
 
-        <ListBox Grid.Column="0" Grid.Row="1" x:Name="listboxRoot" Margin="23,3,7,9" SelectionChanged="ListboxRoot_SelectionChanged" MouseDoubleClick="ListboxRoot_MouseDoubleClick" Panel.ZIndex="-1" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch"/>
+        <!--<Button Grid.Column="0" Grid.Row="0" x:Name="generate_button"
+                Content="Generate Index" 
+                HorizontalAlignment="Right" 
+                Margin="0,10,0,0" 
+                VerticalAlignment="Top" 
+                Width="94" 
+                Background="#FFDDDDDD" 
+                IsEnabled="False" 
+                Click="Generate_Button_Click" 
+                Height="20"/>-->
 
-        <DataGrid Grid.Column="0" Grid.Row="2" x:Name="dataGrid1" Margin="23,0,7,18" VerticalAlignment="Bottom" Height="67" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+        <!--<ListBox Grid.Column="0" Grid.Row="1" x:Name="listboxRoot" 
+                 Margin="16,3,7,9" 
+                 SelectionChanged="ListboxRoot_SelectionChanged" 
+                 MouseDoubleClick="ListboxRoot_MouseDoubleClick" 
+                 Panel.ZIndex="-1" 
+                 VerticalContentAlignment="Stretch" 
+                 HorizontalContentAlignment="Stretch"/>-->
+
+        <ListView Grid.Column="0" Grid.Row="1" x:Name="listboxRoot" 
+                  ItemsSource="{Binding fileList}"
+                  Margin="16,3,7,9" Background="White"
+                  SelectedItem="{Binding Path=selectedFile}"
+                  MouseDoubleClick="ListboxRoot_MouseDoubleClick" SelectionChanged="ListboxRoot_SelectionChanged_1">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Name" Width="300">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding name}"  >
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding tagged}" Value="True">
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Size" Width="70" DisplayMemberBinding="{Binding size}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+
+
+        <DataGrid Grid.Column="1" Grid.Row="1" ItemsSource="{Binding tagList}" AutoGenerateColumns="False" x:Name="tag_grid" Margin="8,3,7,10">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding name}" />
+                <DataGridTextColumn Header="Group" Binding="{Binding group}" />
+                <DataGridTemplateColumn Header="Image">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding image}" Height="60" Width="60"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!--<DataGrid Grid.Column="0" Grid.Row="2" x:Name="dataGrid1" Margin="23,0,7,18" VerticalAlignment="Bottom" Height="67" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
         <DataGrid Grid.Column="1" Grid.Row="1" x:Name="tag_grid" Margin="7,5,10,10" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ItemsSource="{Binding}" IsReadOnly="True" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding name}"/>
@@ -47,7 +155,77 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
-        </DataGrid>
-        <Button Grid.Column="1" Grid.Row="0" x:Name="add_tag_button" Content="Edit Tag Store"  HorizontalAlignment="Right" Height="21" Margin="0,50,10,0" VerticalAlignment="Top" Width="96" Click="Add_tag_button_Click"/>
+        </DataGrid>-->
+
+
+
+        <Grid Grid.Column="0" Grid.Row="2" Margin="16,10,0,5">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="60" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100" />
+            </Grid.RowDefinitions>
+
+
+
+            <DataGrid Grid.Column="0" Grid.Row="0" x:Name="dataGrid1" 
+                  HorizontalContentAlignment="Stretch" 
+                  VerticalContentAlignment="Stretch" Panel.ZIndex="-1"/>
+
+            <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical"  >
+
+                <StackPanel.Resources>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Margin" Value="5,5,0,0"/>
+                    </Style>
+                </StackPanel.Resources>
+
+                <Button Grid.Column="1" Grid.Row="0" x:Name="addTagButton"   
+                VerticalAlignment="Top" 
+                Click="Search_Dir_Button_Click" 
+                Height="41" Width="45" 
+                HorizontalAlignment="Left" 
+                VerticalContentAlignment="Stretch"
+                HorizontalContentAlignment="Stretch">
+                    <StackPanel 
+                Height="32" 
+                Width="32" 
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                ScrollViewer.VerticalScrollBarVisibility="Disabled" >
+                        <Image Source="verification.png" Cursor="Hand" HorizontalAlignment="Left" Width="32" />
+                    </StackPanel>
+                </Button>
+
+                <Button Grid.Column="1" Grid.Row="1" x:Name="removeTagButton"   
+                VerticalAlignment="Top" 
+                Click="Search_Dir_Button_Click" 
+                Height="41" Width="45" 
+                HorizontalAlignment="Left" 
+                VerticalContentAlignment="Stretch"
+                HorizontalContentAlignment="Stretch">
+                    <StackPanel 
+                Height="32" 
+                Width="32" 
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                ScrollViewer.VerticalScrollBarVisibility="Disabled" >
+                        <Image Source="delete.png" Cursor="Hand" HorizontalAlignment="Left" Width="32" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <Button Grid.Column="1" Grid.Row="0" x:Name="add_tag_button" 
+                Content="Edit Tag Store" 
+                HorizontalAlignment="Right"
+                Height="21" Margin="0,50,10,0" 
+                VerticalAlignment="Top" 
+                Width="96" 
+                Click="Add_tag_button_Click"/>
+
     </Grid>
 </Window>

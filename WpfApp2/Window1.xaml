@@ -26,7 +26,7 @@
                  Grid.Column="1"/>
         <TextBox x:Name="Tag_Image_Textbox" 
                  AcceptsReturn="false" 
-                 Text="{Binding Path=selectedTag.image, Mode=TwoWay}" 
+                 Text="{Binding Path=selectedTag.image, Mode=OneWay}" 
                  Height="23" Margin="61,93,38,0" 
                  TextWrapping="NoWrap" 
                  VerticalAlignment="Top" 

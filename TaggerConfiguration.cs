@@ -88,13 +88,11 @@ namespace WpfApp2 {
         
         private string pathField;
         
-        private FileListElementTags tagsField;
+        private FileListElementTags[] tagsField;
         
         private string checksumField;
         
         private string sizeField;
-        
-        private bool taggedField;
         
         /// <remarks/>
         public string name {
@@ -117,7 +115,8 @@ namespace WpfApp2 {
         }
         
         /// <remarks/>
-        public FileListElementTags tags {
+        [System.Xml.Serialization.XmlElementAttribute("tags")]
+        public FileListElementTags[] tags {
             get {
                 return this.tagsField;
             }
@@ -144,16 +143,6 @@ namespace WpfApp2 {
             }
             set {
                 this.sizeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public bool tagged {
-            get {
-                return this.taggedField;
-            }
-            set {
-                this.taggedField = value;
             }
         }
     }
