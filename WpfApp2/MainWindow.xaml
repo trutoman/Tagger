@@ -15,7 +15,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="78" />
             <RowDefinition Height="247*" />
-            <RowDefinition Height="120" />
+            <RowDefinition Height="130" />
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Vertical" Margin="16, 10,0,0" >
@@ -97,11 +97,7 @@
                  VerticalContentAlignment="Stretch" 
                  HorizontalContentAlignment="Stretch"/>-->
 
-        <ListView Grid.Column="0" Grid.Row="1" x:Name="listboxRoot" 
-                  ItemsSource="{Binding fileList}"
-                  Margin="16,3,7,9" Background="White"
-                  SelectedItem="{Binding Path=selectedFile}"
-                  MouseDoubleClick="ListboxRoot_MouseDoubleClick" SelectionChanged="ListboxRoot_SelectionChanged_1">
+        <ListView Grid.Column="0" Grid.Row="1" x:Name="listboxRoot" ItemsSource="{Binding fileList}" Margin="16,3,7,9" Background="White" SelectedItem="{Binding Path=selectedFile}" MouseDoubleClick="ListboxRoot_MouseDoubleClick" SelectionChanged="ListboxRoot_SelectionChanged_1">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Name" Width="300">
@@ -157,8 +153,6 @@
             </DataGrid.Columns>
         </DataGrid>-->
 
-
-
         <Grid Grid.Column="0" Grid.Row="2" Margin="16,10,0,5">
 
             <Grid.ColumnDefinitions>
@@ -169,63 +163,62 @@
                 <RowDefinition Height="100" />
             </Grid.RowDefinitions>
 
-
-
             <DataGrid Grid.Column="0" Grid.Row="0" x:Name="dataGrid1" 
                   HorizontalContentAlignment="Stretch" 
                   VerticalContentAlignment="Stretch" Panel.ZIndex="-1"/>
 
             <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical"  >
-
                 <StackPanel.Resources>
                     <Style TargetType="{x:Type Button}">
                         <Setter Property="Margin" Value="5,5,0,0"/>
                     </Style>
                 </StackPanel.Resources>
-
-                <Button Grid.Column="1" Grid.Row="0" x:Name="addTagButton"   
-                VerticalAlignment="Top" 
-                Click="Search_Dir_Button_Click" 
-                Height="41" Width="45" 
-                HorizontalAlignment="Left" 
-                VerticalContentAlignment="Stretch"
-                HorizontalContentAlignment="Stretch">
-                    <StackPanel 
-                Height="32" 
-                Width="32" 
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                ScrollViewer.VerticalScrollBarVisibility="Disabled" >
+                <Button Grid.Column="1" Grid.Row="0" x:Name="addTagButton" VerticalAlignment="Top" Click="Search_Dir_Button_Click" Height="41" Width="45" HorizontalAlignment="Left" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                    <StackPanel Height="32" Width="32" HorizontalAlignment="Center" VerticalAlignment="Center" ScrollViewer.VerticalScrollBarVisibility="Disabled" >
                         <Image Source="verification.png" Cursor="Hand" HorizontalAlignment="Left" Width="32" />
                     </StackPanel>
                 </Button>
-
-                <Button Grid.Column="1" Grid.Row="1" x:Name="removeTagButton"   
-                VerticalAlignment="Top" 
-                Click="Search_Dir_Button_Click" 
-                Height="41" Width="45" 
-                HorizontalAlignment="Left" 
-                VerticalContentAlignment="Stretch"
-                HorizontalContentAlignment="Stretch">
-                    <StackPanel 
-                Height="32" 
-                Width="32" 
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                ScrollViewer.VerticalScrollBarVisibility="Disabled" >
+                <Button Grid.Column="1" Grid.Row="1" x:Name="removeTagButton" VerticalAlignment="Top" Click="Search_Dir_Button_Click"  Height="41" Width="45" HorizontalAlignment="Left" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                    <StackPanel Height="32" Width="32" HorizontalAlignment="Center" VerticalAlignment="Center" ScrollViewer.VerticalScrollBarVisibility="Disabled" >
                         <Image Source="delete.png" Cursor="Hand" HorizontalAlignment="Left" Width="32" />
                     </StackPanel>
                 </Button>
             </StackPanel>
         </Grid>
 
-        <Button Grid.Column="1" Grid.Row="0" x:Name="add_tag_button" 
-                Content="Edit Tag Store" 
-                HorizontalAlignment="Right"
-                Height="21" Margin="0,50,10,0" 
-                VerticalAlignment="Top" 
-                Width="96" 
-                Click="Add_tag_button_Click"/>
+        <Grid Margin="5,0,10,10" Grid.Column="1" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <ListBox x:Name="TaglistBox" Grid.Column="0" Grid.Row="0" DisplayMemberPath="name" ItemsSource="{Binding Path=tagList}" SelectedItem="{Binding Path=selectedTag}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+            <Grid Grid.Column="1" Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"  />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="50" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
 
+                <Label Grid.Column="0" Grid.Row="0" x:Name="label" Content="Name" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="2"/>
+                <TextBox Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" x:Name="Tag_Name_Textbox" AcceptsReturn="false" Text="{Binding Path=selectedTag.name, Mode=OneWay}" TextWrapping="Wrap" TextChanged="Tag_Name_Textbox_TextChanged" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="2"/>
+
+                <Label Grid.Column="0" Grid.Row="1" x:Name="label_Copy1" Content="Group" Margin="2"/>
+                <TextBox Grid.Column="1" Grid.Row="1"  Grid.ColumnSpan="2" x:Name="Tag_Name_Group" AcceptsReturn="false" Text="{Binding selectedTag.group, Mode=OneWay}" TextWrapping="Wrap" TextChanged="Tag_Name_Textbox_TextChanged" Margin="2"/>
+
+                <Label Grid.Column="0" Grid.Row="2" x:Name="label_Copy" Content="Image" Margin="2" />
+                <TextBox Grid.Column="1" Grid.Row="2" x:Name="Tag_Image_Textbox" AcceptsReturn="false" Text="{Binding Path=selectedTag.image, Mode=OneWay}"  TextWrapping="NoWrap" Margin="2"/>
+                <Button Grid.Column="2" Grid.Row="2" x:Name="Search_Image_Button" Content="..." Click="Search_Image_Button_Click" Margin="2"/>
+
+                <Button Grid.Column="1" Grid.Row="3" x:Name="addTagbutton" Content="Add Tag" Click="AddTagbutton_Click" IsEnabled="False" Margin="2"/>
+                <Button Grid.Column="2" Grid.Row="3" x:Name="addTagbutton_Copy" Content="Remove Tag" Click="AddTagbutton_Click" IsEnabled="False" Margin="2"/>
+
+            </Grid>
+        </Grid>
     </Grid>
 </Window>

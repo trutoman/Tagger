@@ -19,7 +19,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Serialization;
 using System.Security.Cryptography;
-
+using System.Collections.Specialized;
 
 namespace WpfApp2
 {
@@ -71,7 +71,6 @@ namespace WpfApp2
             }
         }
 
-
         private ObservableCollection<TagStoreElementTag> _tagList = new ObservableCollection<TagStoreElementTag>();
         public ObservableCollection<TagStoreElementTag> tagList
         {
@@ -95,6 +94,26 @@ namespace WpfApp2
                 if (_tagList != value)
                 {
                     _tagList = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private void CollectionChangeHandler(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            MainWindow.CONFIGURATION.tagStore = _tagList.ToArray();
+        }
+
+
+        private TagStoreElementTag _selectedTag;
+        public TagStoreElementTag selectedTag
+        {
+            get { return _selectedTag; }
+            set
+            {
+                if (_selectedTag != value)
+                {
+                    _selectedTag = value;
                     OnPropertyChanged();
                 }
             }
@@ -129,6 +148,7 @@ namespace WpfApp2
         public MainWindow()
         {
             DataContext = this;
+            this.tagList.CollectionChanged += this.CollectionChangeHandler;
             InitializeComponent();
         }
 
@@ -222,7 +242,8 @@ namespace WpfApp2
             {
                 System.Windows.Forms.MessageBox.Show(ex.Message);
             }
-
+            Array.Sort<TagStoreElementTag>(MainWindow.CONFIGURATION.tagStore, (x, y) => String.Compare(x.name, y.name,
+                         StringComparison.CurrentCultureIgnoreCase));
             SaveConfigurationButton.IsEnabled = false;
         }
 
@@ -330,13 +351,13 @@ namespace WpfApp2
             }
         }
 
-        private void Add_tag_button_Click(object sender, RoutedEventArgs e)
-        {
-            Window1 tagWindow = new Window1();
-            tagWindow.Show();
-            SaveConfigurationButton.IsEnabled = true;
+        //private void Add_tag_button_Click(object sender, RoutedEventArgs e)
+        //{
+        //    Window1 tagWindow = new Window1();
+        //    tagWindow.Show();
+        //    SaveConfigurationButton.IsEnabled = true;
 
-        }
+        //}
 
         private void UpdateFileTags(FileListElement file)
         {
@@ -391,6 +412,73 @@ namespace WpfApp2
                 System.Windows.Forms.MessageBox.Show(ex.Message);
             }
         }
+
+
+
+
+        private void AddTagbutton_Click(object sender, RoutedEventArgs e)
+        {
+            bool finish = false;
+
+            TagStoreElementTag element = new TagStoreElementTag();
+            element.name = Tag_Name_Textbox.Text;
+            element.group = Tag_Name_Group.Text;
+            element.image = Tag_Image_Textbox.Text;
+
+            for (int count = 0; count < tagList.Count; count++)
+            {
+                if (tagList[count].name == element.name)
+                {
+                    DialogResult dialogResult =
+                        System.Windows.Forms.MessageBox.Show("Tag " + element.name + " already exists \nDo you want to overwrite it?", "Tag already exists",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+                    if (dialogResult == System.Windows.Forms.DialogResult.Yes)
+                    {
+                        tagList[count] = element;
+                    }
+                    finish = true;
+                }
+            }
+
+            if (!finish)
+            {
+                tagList.Add(element);
+                tagList.OrderBy(n => n.name);
+                //MainWindow.CONFIGURATION.tagStore = tagList.ToArray();
+            }
+            SaveConfigurationButton.IsEnabled = true;
+            finish = true;
+        }
+
+        private void Tag_Name_Textbox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!String.IsNullOrEmpty(Tag_Name_Textbox.Text))
+            {
+                addTagbutton.IsEnabled = true;
+            }
+            else
+            {
+                addTagbutton.IsEnabled = false;
+            }
+        }
+
+        private void Search_Image_Button_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog fbd = new OpenFileDialog();
+
+            if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                string file_path = fbd.FileName;
+                Tag_Image_Textbox.Text = file_path;
+            }
+        }
+
+
+
+
+
+
     }
 }
 
