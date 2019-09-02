@@ -155,12 +155,12 @@ namespace WpfApp2
 
         private void PopulateTagGrid()
         {
-            List<List<string>> lsts = new List<List<string>>();
-            lsts.Add(new List<string>());
+            List<List<TagStoreElementTag>> lsts = new List<List<TagStoreElementTag>>();
+            lsts.Add(new List<TagStoreElementTag>());
 
             foreach (var item in CONFIGURATION.tagStore)
             {
-                lsts[0].Add(item.image);
+                lsts[0].Add(item);
             }
 
             lst.ItemsSource = lsts;

@@ -8,9 +8,9 @@
         Title="Tagger" Height="500" Width="1040">
 
     <Window.Resources>
-        
+
         <DataTemplate x:Key="Matrix2D">
-         
+
             <ItemsControl ItemsSource="{Binding}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -20,17 +20,27 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Button Height="60" Width="60">
-                            <Image Source="{Binding}" Cursor="Hand"/>
-                        </Button>
+                        <Grid Background="{x:Null}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="20" />
+                            </Grid.RowDefinitions>
+                            <Button Grid.Column="0" Grid.Row="0" Height="60" Width="60">
+                                <Image Source="{Binding image}" Cursor="Hand"/>
+                            </Button>
+                            <Label Cursor="Hand" BorderThickness="1" Grid.Column="0" Grid.Row="1" Content="{Binding name}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" Padding="0" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                        </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
-                
+
             </ItemsControl>
         </DataTemplate>
 
     </Window.Resources>
-   
+
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -61,11 +71,11 @@
                 </Button>
 
             </StackPanel>
-            
+
             <StackPanel Orientation="Horizontal" Height="17">
                 <Label Grid.Column="0" Grid.Row="0" x:Name="labelrootpath" Content="" HorizontalAlignment="Left"  Width="500" BorderThickness="1"  Height="16"  VerticalAlignment="Top"  FontSize="11" Padding="0"  UseLayoutRounding="True"  Background="{x:Null}"/>
             </StackPanel>
-            
+
         </StackPanel>
 
         <ListView Grid.Column="0" Grid.Row="1" x:Name="listboxRoot" ItemsSource="{Binding fileList}" Margin="16,5,5,5" Background="White" SelectedItem="{Binding Path=selectedFile}" MouseDoubleClick="ListboxRoot_MouseDoubleClick" SelectionChanged="ListboxRoot_SelectionChanged_1">
@@ -75,7 +85,7 @@
                     <GridViewColumn Header="Name" Width="300">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                
+
                                 <TextBlock Text="{Binding name}"  >
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
@@ -87,7 +97,7 @@
                                         </Style>
                                     </TextBlock.Style>
                                 </TextBlock>
-                                
+
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
