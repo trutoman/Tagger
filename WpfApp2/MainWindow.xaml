@@ -8,39 +8,8 @@
         Title="Tagger" Height="500" Width="1040">
 
     <Window.Resources>
-
-        <DataTemplate x:Key="Matrix2D">
-
-            <ItemsControl ItemsSource="{Binding}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Background="{x:Null}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="20" />
-                            </Grid.RowDefinitions>
-                            <Button Grid.Column="0" Grid.Row="0" Height="60" Width="60">
-                                <Image Source="{Binding image}" Cursor="Hand"/>
-                            </Button>
-                            <Label Cursor="Hand" BorderThickness="1" Grid.Column="0" Grid.Row="1" Content="{Binding name}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" Padding="0" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                        </Grid>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-
-            </ItemsControl>
-        </DataTemplate>
-
+       
     </Window.Resources>
-
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -106,21 +75,48 @@
             </ListView.View>
         </ListView>
 
-        <!--<DataGrid Grid.Column="1" Grid.Row="1" ItemsSource="{Binding tagList}" AutoGenerateColumns="False" x:Name="tag_grid" Margin="5,5,16,5">
-            <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Image">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Image Source="{Binding image}" Height="60" Width="60"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>-->
+        <!--<Grid Grid.Column="1" Grid.Row="1" >-->
+        <ListBox Grid.Column="1" Grid.Row="1" x:Name="tagImageList" ItemsSource="{Binding Path=tagList}" SelectedItem="{Binding Path=selectedTag}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
 
-        <Grid Grid.Column="1" Grid.Row="1">
-            <ItemsControl x:Name="lst" ItemTemplate="{DynamicResource Matrix2D}"/>
-        </Grid>
+            <!--// Truco para que itemselected cambie bien-->
+
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Style.Triggers>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter Property="IsSelected" Value="True" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ListBox.ItemContainerStyle>
+
+
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid Background="{x:Null}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="20" />
+                        </Grid.RowDefinitions>
+                        <Button Grid.Column="0" Grid.Row="0" Height="70" Width="70">
+                            <Image Source="{Binding image}" Cursor="Hand"/>
+                        </Button>
+                        <Label Cursor="Hand" Grid.Column="0" Grid.Row="1" Content="{Binding name}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" Padding="0" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel IsItemsHost="True" Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+
+        </ListBox>
+        <!--</Grid>-->
 
         <Grid Grid.Column="0" Grid.Row="2" Margin="16,5,5,16">
             <Grid.ColumnDefinitions>
@@ -153,7 +149,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <ListBox x:Name="TaglistBox" Grid.Column="0" Grid.Row="0" DisplayMemberPath="name" ItemsSource="{Binding Path=tagList}" SelectedItem="{Binding Path=selectedTag}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+            <!--<ListBox x:Name="TaglistBox" Grid.Column="0" Grid.Row="0" DisplayMemberPath="name" ItemsSource="{Binding Path=tagList}" SelectedItem="{Binding Path=selectedTag}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>-->
             <Grid Grid.Column="1" Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="50"  />

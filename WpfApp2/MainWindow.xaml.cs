@@ -104,7 +104,6 @@ namespace WpfApp2
             MainWindow.CONFIGURATION.tagStore = _tagList.ToArray();
         }
 
-
         private TagStoreElementTag _selectedTag;
         public TagStoreElementTag selectedTag
         {
@@ -133,6 +132,12 @@ namespace WpfApp2
             }
         }
 
+
+        //private void OnListBoxItemContainerFocused(object sender, RoutedEventArgs e)
+        //{
+        //    (sender as ListBoxItem).IsSelected = true;
+        //}
+
         //private List<TagStoreElementTag> _datagrid_items;
 
         //public List<TagStoreElementTag> datagrid_Items
@@ -155,15 +160,14 @@ namespace WpfApp2
 
         private void PopulateTagGrid()
         {
-            List<List<TagStoreElementTag>> lsts = new List<List<TagStoreElementTag>>();
-            lsts.Add(new List<TagStoreElementTag>());
+            //List<TagStoreElementTag> lsts = new List<TagStoreElementTag>();
 
-            foreach (var item in CONFIGURATION.tagStore)
-            {
-                lsts[0].Add(item);
-            }
+            //foreach (var item in CONFIGURATION.tagStore)
+            //{
+            //    lsts.Add(item);
+            //}
 
-            lst.ItemsSource = lsts;
+            tagImageList.ItemsSource = tagList;
         }
 
         public string choose_Folder()
@@ -232,6 +236,18 @@ namespace WpfApp2
                 //}
             }
         }
+
+        private void CheckFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            // check if focus is moving from a ListBoxItem, to a ListBoxItem
+            if (e.OldFocus.GetType().Name == "ListBoxItem" && e.NewFocus.GetType().Name == "ListBoxItem")
+            {
+                // if so, cause the original ListBoxItem to loose focus
+                (e.OldFocus as ListBoxItem).IsSelected = false;
+            }
+        }
+
+
         private bool exists_Configuration(string path)
         {
             return (File.Exists(System.IO.Path.Combine(path, CONFIG_FILENAME)));
