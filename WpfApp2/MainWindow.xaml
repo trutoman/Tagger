@@ -19,7 +19,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="78" />
             <RowDefinition Height="247*" />
-            <RowDefinition Height="150" />
+            <RowDefinition Height="210" />
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Vertical" Margin="16, 10,0,0" >
@@ -27,7 +27,7 @@
 
                 <StackPanel.Resources>
                     <Style TargetType="{x:Type Button}">
-                        <Setter Property="Margin" Value="0,10,10,0"/>
+                        <Setter Property="Margin" Value="0,5,5,0"/>
                     </Style>
                 </StackPanel.Resources>
 
@@ -75,10 +75,9 @@
             </ListView.View>
         </ListView>
 
-        <!--<Grid Grid.Column="1" Grid.Row="1" >-->
-        <ListBox Grid.Column="1" Grid.Row="1" x:Name="tagImageList" ItemsSource="{Binding Path=tagList}" SelectedItem="{Binding Path=selectedTag}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
+        <ListBox Grid.Column="1" Grid.Row="1" x:Name="tagImageList" ItemsSource="{Binding Path=tagList}" SelectedItem="{Binding Path=selectedTag}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="5,5,16,5" >
 
-            <!--// Truco para que itemselected cambie bien-->
+            <!--// Truco para que itemselected cambie bien, no lo entiendo pero funciona-->
 
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}">
@@ -98,7 +97,6 @@
                 </Style>
             </ListBox.ItemContainerStyle>
 
-
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid Background="{x:Null}">
@@ -109,10 +107,10 @@
                             <RowDefinition Height="*" />
                             <RowDefinition Height="20" />
                         </Grid.RowDefinitions>
-                        <Button Grid.Column="0" Grid.Row="0" Height="70" Width="70">
+                        <Button Grid.Column="0" Grid.Row="0" Height="70" Width="70" Click="Button_Click" MouseDoubleClick="TagStoreButton_MouseDoubleClick">
                             <Image Source="{Binding image}" Cursor="Hand"/>
                         </Button>
-                        <Label Cursor="Hand" Grid.Column="0" Grid.Row="1" Content="{Binding name}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" Padding="0" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                        <Label Cursor="Hand" Grid.Column="0" Grid.Row="1" Content="{Binding name, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" Padding="0" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
@@ -135,7 +133,52 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <DataGrid Grid.Column="0" Grid.Row="0" x:Name="dataGrid1"  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Panel.ZIndex="-1"/>
+
+            <ListBox Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="1" x:Name="actualTagsGrid" ItemsSource="{Binding Path=selectedFile.filetags}" SelectedItem="{Binding Path=actualselectedTag}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="ActualTagsGrid_SelectionChanged" >
+
+                <!--<ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsKeyboardFocusWithin, RelativeSource={RelativeSource Self}}" Value="True">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(ListBoxItem.IsSelected)">
+                                                <DiscreteBooleanKeyFrame KeyTime="0" Value="True"/>
+                                            </BooleanAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>-->
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Background="{x:Null}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="20" />
+                            </Grid.RowDefinitions>
+                            <Button Grid.Column="0" Grid.Row="0" Height="70" Width="70" Click="Button_Click" >
+                                <Image Source="{Binding image}" Cursor="Hand"/>
+                            </Button>
+                            <Label Cursor="Hand" Grid.Column="0" Grid.Row="1" Content="{Binding name, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" Padding="0" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel IsItemsHost="True" Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+
+            </ListBox>
 
             <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <StackPanel.Resources>

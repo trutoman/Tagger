@@ -88,7 +88,7 @@ namespace WpfApp2 {
         
         private string pathField;
         
-        private FileListElementTags[] tagsField;
+        private string[] tagsField;
         
         private string checksumField;
         
@@ -115,8 +115,8 @@ namespace WpfApp2 {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("tags")]
-        public FileListElementTags[] tags {
+        [System.Xml.Serialization.XmlArrayItemAttribute("name", IsNullable=false)]
+        public string[] tags {
             get {
                 return this.tagsField;
             }
@@ -143,27 +143,6 @@ namespace WpfApp2 {
             }
             set {
                 this.sizeField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/TaggerConfiguration.xsd")]
-    public partial class FileListElementTags {
-        
-        private string nameField;
-        
-        /// <remarks/>
-        public string name {
-            get {
-                return this.nameField;
-            }
-            set {
-                this.nameField = value;
             }
         }
     }
