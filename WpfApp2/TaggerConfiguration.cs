@@ -94,6 +94,8 @@ namespace WpfApp2 {
         
         private string sizeField;
         
+        private bool taggedField;
+        
         /// <remarks/>
         public string name {
             get {
@@ -143,6 +145,16 @@ namespace WpfApp2 {
             }
             set {
                 this.sizeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public bool tagged {
+            get {
+                return this.taggedField;
+            }
+            set {
+                this.taggedField = value;
             }
         }
     }

@@ -18,7 +18,7 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="78" />
-            <RowDefinition Height="247*" />
+            <RowDefinition Height="247*"/>
             <RowDefinition Height="210" />
         </Grid.RowDefinitions>
 
@@ -55,7 +55,7 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
 
-                                <TextBlock Text="{Binding name}"  >
+                                <TextBlock Text="{Binding name}">
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
                                             <Style.Triggers>
@@ -164,7 +164,7 @@
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="20" />
                             </Grid.RowDefinitions>
-                            <Button Grid.Column="0" Grid.Row="0" Height="70" Width="70" Click="Button_Click" >
+                            <Button Grid.Column="0" Grid.Row="0" Height="70" Width="70" Click="Button_Click" MouseDoubleClick="Button_MouseDoubleClick" >
                                 <Image Source="{Binding image}" Cursor="Hand"/>
                             </Button>
                             <Label Cursor="Hand" Grid.Column="0" Grid.Row="1" Content="{Binding name, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" Padding="0" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
