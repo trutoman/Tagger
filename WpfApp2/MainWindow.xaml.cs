@@ -224,26 +224,29 @@ namespace WpfApp2
             element.size = File_Size(file);
             element.tagged = false;
 
-            for (int i = 0; i < CONFIGURATION.file.Length; i++)
+            if (CONFIGURATION.file != null)
             {
-                if (CONFIGURATION.file[i].path == file)
+                for (int i = 0; i < CONFIGURATION.file.Length; i++)
                 {
-                    element.filetags = new ObservableCollection<TagStoreElementTag>();
-                    element.tagged = true;
-                    for (int j = 0; j < CONFIGURATION.file[i].tags.Length; j++)
+                    if (CONFIGURATION.file[i].path == file)
                     {
-                        string auxName = CONFIGURATION.file[i].tags[j];
-                        string auxImage = "";
-
-                        for (int k = 0; k < CONFIGURATION.tagStore.Length; k++)
+                        element.filetags = new ObservableCollection<TagStoreElementTag>();
+                        element.tagged = true;
+                        for (int j = 0; j < CONFIGURATION.file[i].tags.Length; j++)
                         {
-                            if (CONFIGURATION.tagStore[k].name == CONFIGURATION.file[i].tags[j])
+                            string auxName = CONFIGURATION.file[i].tags[j];
+                            string auxImage = "";
+
+                            for (int k = 0; k < CONFIGURATION.tagStore.Length; k++)
                             {
-                                auxImage = CONFIGURATION.tagStore[k].image;
+                                if (CONFIGURATION.tagStore[k].name == CONFIGURATION.file[i].tags[j])
+                                {
+                                    auxImage = CONFIGURATION.tagStore[k].image;
+                                }
                             }
+                            TagStoreElementTag auxTag = new TagStoreElementTag() { name = auxName, image = auxImage };
+                            element.filetags.Add(auxTag);
                         }
-                        TagStoreElementTag auxTag = new TagStoreElementTag() { name = auxName, image = auxImage };
-                        element.filetags.Add(auxTag);
                     }
                 }
             }
@@ -261,7 +264,6 @@ namespace WpfApp2
                 int total_elements = allFiles.GetLength(0);
                 foreach (string currentFile in allFiles)
                 {
-                    //ComposeFileView(currentFile);
                     fileList.Add(ComposeFileView(currentFile));
                 }
                 // }
@@ -306,10 +308,13 @@ namespace WpfApp2
             {
                 System.Windows.Forms.MessageBox.Show(ex.Message);
             }
-            Array.Sort<TagStoreElementTag>(MainWindow.CONFIGURATION.tagStore, (x, y) => String.Compare(x.name, y.name,
-                         StringComparison.CurrentCultureIgnoreCase));
+
+            if (CONFIGURATION.tagStore != null)
+            {
+                Array.Sort<TagStoreElementTag>(MainWindow.CONFIGURATION.tagStore, (x, y) => String.Compare(x.name, y.name,
+                             StringComparison.CurrentCultureIgnoreCase));
+            }
             SaveConfigurationButton.IsEnabled = false;
-            
         }
 
         private string File_Size(string filename)
@@ -374,7 +379,12 @@ namespace WpfApp2
                 BASE_DIR = file_path;
                 Environment.CurrentDirectory = (BASE_DIR);
                 load_Configuration(System.IO.Path.Combine(BASE_DIR, CONFIG_FILENAME));
-                PopulateTagGrid();
+
+                if (CONFIGURATION.tagStore != null)
+                {
+                    PopulateTagGrid();
+                }
+
                 populate_listbox();
             }
             else
@@ -421,14 +431,17 @@ namespace WpfApp2
 
         private void ListboxRoot_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
         {
-            for (int i = 0; i < CONFIGURATION.file.Length; i++)
+            if (CONFIGURATION.file != null)
             {
-                // if (selectedFile.path == CONFIGURATION.file[i].name)
-                //{
-                // File exist in CONFIGURATION so it is tagged                    
-                // ACTUAL_TAGS = CONFIGURATION.file[i].tags;
-                //actualTagsGrid.ItemsSource = selectedFile.filetags;                    
-                // }
+                for (int i = 0; i < CONFIGURATION.file.Length; i++)
+                {
+                    // if (selectedFile.path == CONFIGURATION.file[i].name)
+                    //{
+                    // File exist in CONFIGURATION so it is tagged                    
+                    // ACTUAL_TAGS = CONFIGURATION.file[i].tags;
+                    //actualTagsGrid.ItemsSource = selectedFile.filetags;                    
+                    // }
+                }
             }
         }
 
@@ -498,6 +511,7 @@ namespace WpfApp2
             {
                 System.Windows.Forms.MessageBox.Show(ex.Message);
             }
+            SaveConfigurationButton.IsEnabled = false;
         }
 
         private void AddTagbutton_Click(object sender, RoutedEventArgs e)
@@ -642,7 +656,7 @@ namespace WpfApp2
                 if (item.name == name)
                 {
                     selectedFile.filetags.Remove(item);
-                    SaveConfigurationButton.IsEnabled = false;
+                    SaveConfigurationButton.IsEnabled = true;
                     break;
                 }
             }
