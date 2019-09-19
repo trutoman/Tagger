@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WpfApp2"
         mc:Ignorable="d"
         Title="Tagger" Height="500" Width="1040">
- 
+
     <Window.Resources>
 
         <CollectionViewSource Source="{Binding Path=tagList}" x:Key="categories">
@@ -58,7 +58,12 @@
                 <GridView>
                     <GridView.Columns>
 
-                        <GridViewColumn Header="Name" Width="300">
+                        <GridViewColumn Width="300">
+
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="name" Click="lvUsersColumnHeader_Click">Name</GridViewColumnHeader>
+                            </GridViewColumn.Header>
+
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
 
@@ -78,7 +83,11 @@
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
 
-                        <GridViewColumn Header="Size" Width="70" DisplayMemberBinding="{Binding size}" />
+                        <GridViewColumn Width="70" DisplayMemberBinding="{Binding size}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="size" Click="lvUsersColumnHeader_Click">Size</GridViewColumnHeader>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
 
                     </GridView.Columns>
                 </GridView>

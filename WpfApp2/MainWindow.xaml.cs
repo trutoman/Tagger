@@ -21,6 +21,7 @@ using System.Xml.Serialization;
 using System.Security.Cryptography;
 using System.Collections.Specialized;
 
+
 namespace WpfApp2
 {
     /// <summary>
@@ -29,6 +30,45 @@ namespace WpfApp2
     /// 
 
 
+    public class SortAdorner : Adorner
+    {
+        private static Geometry ascGeometry =
+            Geometry.Parse("M 0 4 L 3.5 0 L 7 4 Z");
+
+        private static Geometry descGeometry =
+            Geometry.Parse("M 0 0 L 3.5 4 L 7 0 Z");
+
+        public ListSortDirection Direction { get; private set; }
+
+        public SortAdorner(UIElement element, ListSortDirection dir)
+            : base(element)
+        {
+            this.Direction = dir;
+        }
+
+        protected override void OnRender(DrawingContext drawingContext)
+        {
+            base.OnRender(drawingContext);
+
+            if (AdornedElement.RenderSize.Width < 20)
+                return;
+
+            TranslateTransform transform = new TranslateTransform
+                (
+                    AdornedElement.RenderSize.Width - 15,
+                    (AdornedElement.RenderSize.Height - 5) / 2
+                );
+            drawingContext.PushTransform(transform);
+
+            Geometry geometry = ascGeometry;
+            if (this.Direction == ListSortDirection.Descending)
+                geometry = descGeometry;
+            drawingContext.DrawGeometry(Brushes.Black, null, geometry);
+
+            drawingContext.Pop();
+        }
+    }
+
     public partial class MainWindow : INotifyPropertyChanged
     {
         private const string CONFIG_FILENAME = "TaggerConfiguration.xml";
@@ -36,6 +76,9 @@ namespace WpfApp2
         private static string[] SUPPORTED_FILES = { ".mpg", ".avi", ".flv", ".mkv", ".mp4", ".mpeg", ".wmv", ".mov" };
         public static RootElement CONFIGURATION = new RootElement();
         public const int MAX_TAGS = 1024;
+
+        private GridViewColumnHeader listViewSortCol = null;
+        private SortAdorner listViewSortAdorner = null;
 
         public class FileView
         {
@@ -140,6 +183,10 @@ namespace WpfApp2
             DataContext = this;
             this.tagList.CollectionChanged += this.CollectionChangeHandler;
             InitializeComponent();
+
+            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(listboxRoot.ItemsSource);            
+            view.SortDescriptions.Add(new SortDescription("name", ListSortDirection.Ascending));
+            view.SortDescriptions.Add(new SortDescription("size", ListSortDirection.Ascending));
         }
 
         private void PopulateTagGrid()
@@ -470,12 +517,7 @@ namespace WpfApp2
                 MainWindow.CONFIGURATION.tagStore = tagList.ToArray();
             }
             SaveConfigurationButton.IsEnabled = true;
-
-
-
         }
-
-
 
         private void RemoveTagbutton_Click(object sender, RoutedEventArgs e)
         {
@@ -584,6 +626,26 @@ namespace WpfApp2
             System.Windows.Controls.Button source_button = (System.Windows.Controls.Button)sender;
             string name = ((TagStoreElementTag)source_button.DataContext).name;
             RemoveTagOnFile(name);
+        }
+
+        private void lvUsersColumnHeader_Click(object sender, RoutedEventArgs e)
+        {
+            GridViewColumnHeader column = (sender as GridViewColumnHeader);
+            string sortBy = column.Tag.ToString();
+            if (listViewSortCol != null)
+            {
+                AdornerLayer.GetAdornerLayer(listViewSortCol).Remove(listViewSortAdorner);
+                listboxRoot.Items.SortDescriptions.Clear();
+            }
+
+            ListSortDirection newDir = ListSortDirection.Ascending;
+            if (listViewSortCol == column && listViewSortAdorner.Direction == newDir)
+                newDir = ListSortDirection.Descending;
+
+            listViewSortCol = column;
+            listViewSortAdorner = new SortAdorner(listViewSortCol, newDir);
+            AdornerLayer.GetAdornerLayer(listViewSortCol).Add(listViewSortAdorner);
+            listboxRoot.Items.SortDescriptions.Add(new SortDescription(sortBy, newDir));
         }
     }
 }
