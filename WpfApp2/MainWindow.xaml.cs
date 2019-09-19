@@ -35,7 +35,6 @@ namespace WpfApp2
         private static string BASE_DIR = string.Empty;
         private static string[] SUPPORTED_FILES = { ".mpg", ".avi", ".flv", ".mkv", ".mp4", ".mpeg", ".wmv", ".mov" };
         public static RootElement CONFIGURATION = new RootElement();
-        //private static FileListElement[] ACTUAL_TAGS = new FileListElementTags[] { };
         public const int MAX_TAGS = 1024;
 
         public class FileView
@@ -67,7 +66,7 @@ namespace WpfApp2
             {
                 if (_fileList != value)
                 {
-                    System.Windows.Forms.MessageBox.Show("-------------------");
+                    System.Windows.Forms.MessageBox.Show("--Filelist set -----------------");
                     _fileList = value;
                     OnPropertyChanged();
                 }
@@ -101,34 +100,6 @@ namespace WpfApp2
                 }
             }
         }
-
-
-        //private ObservableCollection<FileListElementTags> _actualTags = new ObservableCollection<FileListElementTags>();
-        //public ObservableCollection<FileListElementTags> actualTags
-        //{
-        //    get
-        //    {
-        //        if (selectedFile.tagged)
-        //        {
-
-        //            foreach (var item in tagList)
-        //            {
-
-        //            }
-        //        }
-        //        return _actualTags;
-        //    }
-
-        //    set
-        //    {
-        //        if (_actualTags != value)
-        //        {
-        //            _actualTags = value;
-        //            OnPropertyChanged();
-        //        }
-        //    }
-        //}
-
 
         private void CollectionChangeHandler(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -164,24 +135,6 @@ namespace WpfApp2
             }
         }
 
-
-        //private void OnListBoxItemContainerFocused(object sender, RoutedEventArgs e)
-        //{
-        //    (sender as ListBoxItem).IsSelected = true;
-        //}
-
-        //private List<TagStoreElementTag> _datagrid_items;
-
-        //public List<TagStoreElementTag> datagrid_Items
-        //{
-        //    get { return _datagrid_items; }
-        //    set { _datagrid_items = value; }
-        //}
-
-
-        ///////////////////////////////////////////////////////////////////////////////////////////
-
-
         public MainWindow()
         {
             DataContext = this;
@@ -191,13 +144,6 @@ namespace WpfApp2
 
         private void PopulateTagGrid()
         {
-            //List<TagStoreElementTag> lsts = new List<TagStoreElementTag>();
-
-            //foreach (var item in CONFIGURATION.tagStore)
-            //{
-            //    lsts.Add(item);
-            //}
-
             tagImageList.ItemsSource = tagList;
         }
 
@@ -257,21 +203,20 @@ namespace WpfApp2
         {
             {
                 // Enumerar ficheros
-                //try
-                // {
-                string[] allFiles = Directory.GetFiles(BASE_DIR, "*.*")
-                    .Where(f => SUPPORTED_FILES.Contains(System.IO.Path.GetExtension(f).ToLower())).ToArray();
-                int total_elements = allFiles.GetLength(0);
-                foreach (string currentFile in allFiles)
+                try
                 {
-                    fileList.Add(ComposeFileView(currentFile));
+                    string[] allFiles = Directory.GetFiles(BASE_DIR, "*.*", SearchOption.AllDirectories)
+                        .Where(f => SUPPORTED_FILES.Contains(System.IO.Path.GetExtension(f).ToLower())).ToArray();
+                    int total_elements = allFiles.GetLength(0);
+                    foreach (string currentFile in allFiles)
+                    {
+                        fileList.Add(ComposeFileView(currentFile));
+                    }
                 }
-                // }
-                //catch (Exception e)
-                //{
-                //    System.Windows.Forms.MessageBox.Show(e.Message, "Error populating File listbox", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //}
-
+                catch (Exception e)
+                {
+                    System.Windows.Forms.MessageBox.Show(e.Message, "Error populating File listbox", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
@@ -421,14 +366,6 @@ namespace WpfApp2
             }
         }
 
-        //private void Add_tag_button_Click(object sender, RoutedEventArgs e)
-        //{
-        //    Window1 tagWindow = new Window1();
-        //    tagWindow.Show();
-        //    SaveConfigurationButton.IsEnabled = true;
-
-        //}
-
         private void ListboxRoot_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
         {
             if (CONFIGURATION.file != null)
@@ -469,19 +406,6 @@ namespace WpfApp2
                         taglist.Add(tag.name);
                     }
                     element.tags = taglist.ToArray();
-
-                    //CONFIGURATION.file[i].name = item.name;
-                    //CONFIGURATION.file[i].path = item.path;
-                    //CONFIGURATION.file[i].size = item.size;
-                    ////CONFIGURATION.file[i].checksum = item.;
-                    //foreach (var tag in item.filetags)
-                    //{
-                    //    taglist.Add(tag.name);
-                    //}
-                    //CONFIGURATION.file[i].tags = taglist.ToArray();
-
-                    // }
-                    //}
                     allfiles.Add(element);
                     taglist.Clear();
                 }
@@ -546,18 +470,30 @@ namespace WpfApp2
                 MainWindow.CONFIGURATION.tagStore = tagList.ToArray();
             }
             SaveConfigurationButton.IsEnabled = true;
-            finish = true;
+
+
+
+        }
+
+
+
+        private void RemoveTagbutton_Click(object sender, RoutedEventArgs e)
+        {
+            tagList.Remove(selectedTag);
+            tagList.OrderBy(n => n.name);
+            MainWindow.CONFIGURATION.tagStore = tagList.ToArray();
+            SaveConfigurationButton.IsEnabled = true;
         }
 
         private void Tag_Name_Textbox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (!String.IsNullOrEmpty(Tag_Name_Textbox.Text))
             {
-                addTagbutton.IsEnabled = true;
+                okTagButton.IsEnabled = true;
             }
             else
             {
-                addTagbutton.IsEnabled = false;
+                okTagButton.IsEnabled = false;
             }
         }
 
@@ -572,16 +508,6 @@ namespace WpfApp2
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void ActualTagsGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
         private void InsertTagOnFile(TagStoreElementTag tagName, FileView file)
         {
 
@@ -589,7 +515,6 @@ namespace WpfApp2
             {
 
                 var modifiable = fileList.FirstOrDefault(i => i.path == file.path);
-                //FileView newFile = new FileView();
                 modifiable.name = file.name;
                 modifiable.path = file.path;
                 modifiable.size = file.size;
@@ -597,15 +522,10 @@ namespace WpfApp2
                 modifiable.filetags = new ObservableCollection<TagStoreElementTag>();
                 modifiable.filetags.Add(tagName);
                 SaveConfigurationButton.IsEnabled = true;
-                //fileList.Add(newFile);
-                //listboxRoot.ItemsSource = null;
-                //listboxRoot.ItemsSource = fileList;
                 selectedFile = null;
                 selectedFile = modifiable;
                 listboxRoot.Items.Refresh();
                 actualTagsGrid.Items.Refresh();
-                //selectedFile = file;
-                //populate_listbox();
             }
             else
             {
@@ -628,9 +548,6 @@ namespace WpfApp2
 
         private void TagStoreButton_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            //string content = (sender as System.Windows.Controls.Button).Content.ToString();
-            //string second = e.ToString();
-
             System.Windows.Controls.Button source_button = (System.Windows.Controls.Button)sender;
             string name = ((TagStoreElementTag)source_button.DataContext).name;
             string image = ((TagStoreElementTag)source_button.DataContext).image;
