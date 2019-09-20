@@ -184,9 +184,9 @@ namespace WpfApp2
             this.tagList.CollectionChanged += this.CollectionChangeHandler;
             InitializeComponent();
 
-            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(listboxRoot.ItemsSource);            
-            view.SortDescriptions.Add(new SortDescription("name", ListSortDirection.Ascending));
-            view.SortDescriptions.Add(new SortDescription("size", ListSortDirection.Ascending));
+            //CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(listboxRoot.ItemsSource);            
+            //view.SortDescriptions.Add(new SortDescription("name", ListSortDirection.Ascending));
+            //view.SortDescriptions.Add(new SortDescription("size", ListSortDirection.Ascending));
         }
 
         private void PopulateTagGrid()
@@ -605,7 +605,6 @@ namespace WpfApp2
             {
                 System.Windows.Forms.MessageBox.Show("No file", "No file selected", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
-
         }
 
         private void RemoveTagOnFile(string name)
@@ -646,6 +645,35 @@ namespace WpfApp2
             listViewSortAdorner = new SortAdorner(listViewSortCol, newDir);
             AdornerLayer.GetAdornerLayer(listViewSortCol).Add(listViewSortAdorner);
             listboxRoot.Items.SortDescriptions.Add(new SortDescription(sortBy, newDir));
+        }
+
+        public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
+        {
+            if (depObj != null)
+            {
+                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+                {
+                    DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
+                    if (child != null && child is T)
+                    {
+                        yield return (T)child;
+                    }
+
+                    foreach (T childOfChild in FindVisualChildren<T>(child))
+                    {
+                        yield return childOfChild;
+                    }
+                }
+            }
+        }
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            IEnumerable<System.Windows.Controls.Button> elements = FindVisualChildren<System.Windows.Controls.Button>(this).Where(x => x.Tag != null && x.Tag.ToString() == "tagtag");
+            foreach (System.Windows.Controls.Button button in elements)
+            {
+                button.Width = slider.Value;
+                button.Height = slider.Value;
+            }
         }
     }
 }

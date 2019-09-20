@@ -126,7 +126,7 @@
                             <RowDefinition Height="*" />
                             <RowDefinition Height="20" />
                         </Grid.RowDefinitions>
-                        <Button Grid.Column="0" Grid.Row="0" Height="70" Width="70"  MouseDoubleClick="TagStoreButton_MouseDoubleClick" Margin="0" Padding="0">
+                        <Button Grid.Column="0" Tag="tagtag" Grid.Row="0" Height="77" Width="77"  MouseDoubleClick="TagStoreButton_MouseDoubleClick" Margin="0" Padding="0">
                             <Image Source="{Binding image}" Cursor="Hand"/>
                         </Button>
                         <Label Cursor="Hand" Grid.Column="0" Grid.Row="1" Content="{Binding name, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" Padding="0" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
@@ -252,6 +252,9 @@
                     <Image Source="tagOK.png" Cursor="Hand"/>
                 </Button>
 
+            </Grid>
+            <Grid Grid.Column="0" Grid.Row="0"  Margin="5,5,16,16">
+                <Slider x:Name="slider" VerticalAlignment="Top" Cursor="Hand" Minimum="30" Maximum="120" Value="75" ValueChanged="Slider_ValueChanged"/>
             </Grid>
         </Grid>
     </Grid>
