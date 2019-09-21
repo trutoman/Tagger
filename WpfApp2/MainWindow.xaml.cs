@@ -21,6 +21,7 @@ using System.Xml.Serialization;
 using System.Security.Cryptography;
 using System.Collections.Specialized;
 
+
 namespace WpfApp2
 {
     /// <summary>
@@ -28,6 +29,44 @@ namespace WpfApp2
     /// </summary>
     /// 
 
+    public class SortAdorner : Adorner
+    {
+        private static Geometry ascGeometry =
+            Geometry.Parse("M 0 4 L 3.5 0 L 7 4 Z");
+
+        private static Geometry descGeometry =
+            Geometry.Parse("M 0 0 L 3.5 4 L 7 0 Z");
+
+        public ListSortDirection Direction { get; private set; }
+
+        public SortAdorner(UIElement element, ListSortDirection dir)
+            : base(element)
+        {
+            this.Direction = dir;
+        }
+
+        protected override void OnRender(DrawingContext drawingContext)
+        {
+            base.OnRender(drawingContext);
+
+            if (AdornedElement.RenderSize.Width < 20)
+                return;
+
+            TranslateTransform transform = new TranslateTransform
+                (
+                    AdornedElement.RenderSize.Width - 15,
+                    (AdornedElement.RenderSize.Height - 5) / 2
+                );
+            drawingContext.PushTransform(transform);
+
+            Geometry geometry = ascGeometry;
+            if (this.Direction == ListSortDirection.Descending)
+                geometry = descGeometry;
+            drawingContext.DrawGeometry(Brushes.Black, null, geometry);
+
+            drawingContext.Pop();
+        }
+    }
 
     public partial class MainWindow : INotifyPropertyChanged
     {
@@ -35,8 +74,10 @@ namespace WpfApp2
         private static string BASE_DIR = string.Empty;
         private static string[] SUPPORTED_FILES = { ".mpg", ".avi", ".flv", ".mkv", ".mp4", ".mpeg", ".wmv", ".mov" };
         public static RootElement CONFIGURATION = new RootElement();
-        private static object LISTBOX_INDEX = null;
         public const int MAX_TAGS = 1024;
+
+        private GridViewColumnHeader listViewSortCol = null;
+        private SortAdorner listViewSortAdorner = null;
 
         public class FileView
         {
@@ -44,11 +85,13 @@ namespace WpfApp2
             public string name { get; set; }
             public string size { get; set; }
             public bool tagged { get; set; }
+            public ObservableCollection<TagStoreElementTag> filetags { get; set; }
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////
 
         public event PropertyChangedEventHandler PropertyChanged;
+
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -65,6 +108,7 @@ namespace WpfApp2
             {
                 if (_fileList != value)
                 {
+                    System.Windows.Forms.MessageBox.Show("--Filelist set -----------------");
                     _fileList = value;
                     OnPropertyChanged();
                 }
@@ -80,6 +124,7 @@ namespace WpfApp2
                 {
                     if (MainWindow.CONFIGURATION.tagStore != null)
                     {
+                        //System.Windows.Forms.MessageBox.Show("Estoy en el get");
                         foreach (var item in MainWindow.CONFIGURATION.tagStore)
                         {
                             _tagList.Add(item);
@@ -101,9 +146,9 @@ namespace WpfApp2
 
         private void CollectionChangeHandler(object sender, NotifyCollectionChangedEventArgs e)
         {
+            //System.Windows.Forms.MessageBox.Show("CollectionChangeHandler" + sender.ToString() + " -> " + e.Action);
             MainWindow.CONFIGURATION.tagStore = _tagList.ToArray();
         }
-
 
         private TagStoreElementTag _selectedTag;
         public TagStoreElementTag selectedTag
@@ -133,37 +178,20 @@ namespace WpfApp2
             }
         }
 
-        //private List<TagStoreElementTag> _datagrid_items;
-
-        //public List<TagStoreElementTag> datagrid_Items
-        //{
-        //    get { return _datagrid_items; }
-        //    set { _datagrid_items = value; }
-        //}
-
-
-        ///////////////////////////////////////////////////////////////////////////////////////////
-
-
         public MainWindow()
         {
             DataContext = this;
             this.tagList.CollectionChanged += this.CollectionChangeHandler;
             InitializeComponent();
 
+            //CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(listboxRoot.ItemsSource);            
+            //view.SortDescriptions.Add(new SortDescription("name", ListSortDirection.Ascending));
+            //view.SortDescriptions.Add(new SortDescription("size", ListSortDirection.Ascending));
         }
 
         private void PopulateTagGrid()
         {
-            List<List<string>> lsts = new List<List<string>>();
-            lsts.Add(new List<string>());
-
-            foreach (var item in CONFIGURATION.tagStore)
-            {
-                lsts[0].Add(item.image);
-            }
-
-            lst.ItemsSource = lsts;
+            tagImageList.ItemsSource = tagList;
         }
 
         public string choose_Folder()
@@ -180,21 +208,6 @@ namespace WpfApp2
             return string.Empty;
         }
 
-        private void populate_tag_grid()
-        {
-            //tag_grid.ItemsSource = tagList;
-        }
-
-        private bool IsFileTagged(string file)
-        {
-            for (int i = 0; i < CONFIGURATION.file.Length; i++)
-            {
-                if (CONFIGURATION.file[i].name == file)
-                    return true;
-            }
-            return false;
-        }
-
         private FileView ComposeFileView(string file)
         {
             FileView element = new FileView();
@@ -202,7 +215,34 @@ namespace WpfApp2
             element.path = file;
             element.name = System.IO.Path.GetFileName(file);
             element.size = File_Size(file);
-            element.tagged = IsFileTagged(file);
+            element.tagged = false;
+
+            if (CONFIGURATION.file != null)
+            {
+                for (int i = 0; i < CONFIGURATION.file.Length; i++)
+                {
+                    if (CONFIGURATION.file[i].path == file)
+                    {
+                        element.filetags = new ObservableCollection<TagStoreElementTag>();
+                        element.tagged = true;
+                        for (int j = 0; j < CONFIGURATION.file[i].tags.Length; j++)
+                        {
+                            string auxName = CONFIGURATION.file[i].tags[j];
+                            string auxImage = "";
+
+                            for (int k = 0; k < CONFIGURATION.tagStore.Length; k++)
+                            {
+                                if (CONFIGURATION.tagStore[k].name == CONFIGURATION.file[i].tags[j])
+                                {
+                                    auxImage = CONFIGURATION.tagStore[k].image;
+                                }
+                            }
+                            TagStoreElementTag auxTag = new TagStoreElementTag() { name = auxName, image = auxImage };
+                            element.filetags.Add(auxTag);
+                        }
+                    }
+                }
+            }
             return element;
         }
 
@@ -212,12 +252,11 @@ namespace WpfApp2
                 // Enumerar ficheros
                 try
                 {
-                    string[] allFiles = Directory.GetFiles(BASE_DIR, "*.*")
+                    string[] allFiles = Directory.GetFiles(BASE_DIR, "*.*", SearchOption.AllDirectories)
                         .Where(f => SUPPORTED_FILES.Contains(System.IO.Path.GetExtension(f).ToLower())).ToArray();
                     int total_elements = allFiles.GetLength(0);
                     foreach (string currentFile in allFiles)
                     {
-                        ComposeFileView(currentFile);
                         fileList.Add(ComposeFileView(currentFile));
                     }
                 }
@@ -225,13 +264,19 @@ namespace WpfApp2
                 {
                     System.Windows.Forms.MessageBox.Show(e.Message, "Error populating File listbox", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-
-                //foreach (var item in CONFIGURATION.file)
-                //{
-                //    listboxRoot.Items.Add(item.name);
-                //}
             }
         }
+
+        private void CheckFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            // check if focus is moving from a ListBoxItem, to a ListBoxItem
+            if (e.OldFocus.GetType().Name == "ListBoxItem" && e.NewFocus.GetType().Name == "ListBoxItem")
+            {
+                // if so, cause the original ListBoxItem to loose focus
+                (e.OldFocus as ListBoxItem).IsSelected = false;
+            }
+        }
+
         private bool exists_Configuration(string path)
         {
             return (File.Exists(System.IO.Path.Combine(path, CONFIG_FILENAME)));
@@ -255,10 +300,13 @@ namespace WpfApp2
             {
                 System.Windows.Forms.MessageBox.Show(ex.Message);
             }
-            Array.Sort<TagStoreElementTag>(MainWindow.CONFIGURATION.tagStore, (x, y) => String.Compare(x.name, y.name,
-                         StringComparison.CurrentCultureIgnoreCase));
+
+            if (CONFIGURATION.tagStore != null)
+            {
+                Array.Sort<TagStoreElementTag>(MainWindow.CONFIGURATION.tagStore, (x, y) => String.Compare(x.name, y.name,
+                             StringComparison.CurrentCultureIgnoreCase));
+            }
             SaveConfigurationButton.IsEnabled = false;
-            PopulateTagGrid();
         }
 
         private string File_Size(string filename)
@@ -323,8 +371,13 @@ namespace WpfApp2
                 BASE_DIR = file_path;
                 Environment.CurrentDirectory = (BASE_DIR);
                 load_Configuration(System.IO.Path.Combine(BASE_DIR, CONFIG_FILENAME));
+
+                if (CONFIGURATION.tagStore != null)
+                {
+                    PopulateTagGrid();
+                }
+
                 populate_listbox();
-                populate_tag_grid();
             }
             else
             {
@@ -351,11 +404,6 @@ namespace WpfApp2
             }
         }
 
-        private void ListboxRoot_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            LISTBOX_INDEX = listboxRoot.Items[listboxRoot.SelectedIndex];
-        }
-
         private void ListboxRoot_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (listboxRoot.SelectedItem != null)
@@ -365,52 +413,62 @@ namespace WpfApp2
             }
         }
 
-        //private void Add_tag_button_Click(object sender, RoutedEventArgs e)
-        //{
-        //    Window1 tagWindow = new Window1();
-        //    tagWindow.Show();
-        //    SaveConfigurationButton.IsEnabled = true;
-
-        //}
-
-        private void UpdateFileTags(FileListElement file)
-        {
-            if (file.tags != null)
-            {
-                for (int i = 0; i < file.tags.Length; i++)
-                {
-                    foreach (var item in tagList)
-                    {
-                        if (file.tags[i].name == item.name)
-                        {
-
-                        }
-                        else
-                        {
-                            System.Windows.Forms.MessageBox.Show("fd", "Tag " + file.tags[i].name + " found on file " + file.name + " not exists",
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                    }
-                }
-            }
-        }
-
         private void ListboxRoot_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
         {
-            for (int i = 0; i < CONFIGURATION.file.Length; i++)
+            if (CONFIGURATION.file != null)
             {
-                if (selectedFile.path == CONFIGURATION.file[i].name)
+                for (int i = 0; i < CONFIGURATION.file.Length; i++)
                 {
-                    UpdateFileTags(CONFIGURATION.file[i]);
+                    // if (selectedFile.path == CONFIGURATION.file[i].name)
+                    //{
+                    // File exist in CONFIGURATION so it is tagged                    
+                    // ACTUAL_TAGS = CONFIGURATION.file[i].tags;
+                    //actualTagsGrid.ItemsSource = selectedFile.filetags;                    
+                    // }
                 }
             }
-
         }
+
+        private void ObtainFilesChanges()
+        {
+            List<string> filetaglist = new List<string>();
+            List<FileListElement> allfiles = new List<FileListElement>();
+
+            foreach (var item in fileList)
+            {
+                if (item.tagged)
+                {
+                    //for (int i = 0; i < CONFIGURATION.file.Length; i++)
+                    //{
+                    //if (CONFIGURATION.file[i].name == item.name)
+                    // {
+                    FileListElement element = new FileListElement();
+                    element.name = item.name;
+                    element.path = item.path;
+                    element.size = item.size;
+                    element.tagged = item.tagged;
+
+                    foreach (var tag in item.filetags)
+                    {
+                        filetaglist.Add(tag.name);
+                    }
+                    element.tags = filetaglist.ToArray();
+                    allfiles.Add(element);
+                    filetaglist.Clear();
+                }
+
+            }
+
+            CONFIGURATION.file = allfiles.ToArray();
+        }
+
 
         private void SaveConfigurationButtonClick(object sender, RoutedEventArgs e)
         {
             try
             {
+                // Taglist changes are alredy done because of Changeevent over tagList.
+                ObtainFilesChanges();
                 string pathFileSerialized = System.IO.Path.Combine(BASE_DIR, CONFIG_FILENAME);
                 XmlSerializer out_xmlSerializer = new XmlSerializer(typeof(RootElement));
 
@@ -424,6 +482,7 @@ namespace WpfApp2
             {
                 System.Windows.Forms.MessageBox.Show(ex.Message);
             }
+            SaveConfigurationButton.IsEnabled = false;
         }
 
         private void AddTagbutton_Click(object sender, RoutedEventArgs e)
@@ -455,21 +514,28 @@ namespace WpfApp2
             {
                 tagList.Add(element);
                 tagList.OrderBy(n => n.name);
-                //MainWindow.CONFIGURATION.tagStore = tagList.ToArray();
+                MainWindow.CONFIGURATION.tagStore = tagList.ToArray();
             }
             SaveConfigurationButton.IsEnabled = true;
-            finish = true;
+        }
+
+        private void RemoveTagbutton_Click(object sender, RoutedEventArgs e)
+        {
+            tagList.Remove(selectedTag);
+            tagList.OrderBy(n => n.name);
+            MainWindow.CONFIGURATION.tagStore = tagList.ToArray();
+            SaveConfigurationButton.IsEnabled = true;
         }
 
         private void Tag_Name_Textbox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (!String.IsNullOrEmpty(Tag_Name_Textbox.Text))
             {
-                addTagbutton.IsEnabled = true;
+                okTagButton.IsEnabled = true;
             }
             else
             {
-                addTagbutton.IsEnabled = false;
+                okTagButton.IsEnabled = false;
             }
         }
 
@@ -484,11 +550,130 @@ namespace WpfApp2
             }
         }
 
+        private void InsertTagOnFile(TagStoreElementTag tagName, FileView file)
+        {
 
+            if (!file.tagged)
+            {
 
+                var modifiable = fileList.FirstOrDefault(i => i.path == file.path);
+                modifiable.name = file.name;
+                modifiable.path = file.path;
+                modifiable.size = file.size;
+                modifiable.tagged = true;
+                modifiable.filetags = new ObservableCollection<TagStoreElementTag>();
+                modifiable.filetags.Add(tagName);
+                SaveConfigurationButton.IsEnabled = true;
+                selectedFile = null;
+                selectedFile = modifiable;
+                listboxRoot.Items.Refresh();
+                actualTagsGrid.Items.Refresh();
+            }
+            else
+            {
+                bool found = false;
+                //System.Windows.Forms.MessageBox.Show("");
+                foreach (var item in file.filetags)
+                {
+                    if (item.name == tagName.name)
+                    {
+                        found = true;
+                    }
+                }
+                if (!found)
+                {
+                    file.filetags.Add(tagName);
+                    SaveConfigurationButton.IsEnabled = true;
+                }
+            }
+        }
 
+        private void TagStoreButton_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            System.Windows.Controls.Button source_button = (System.Windows.Controls.Button)sender;
+            string name = ((TagStoreElementTag)source_button.DataContext).name;
+            string image = ((TagStoreElementTag)source_button.DataContext).image;
+            string group = ((TagStoreElementTag)source_button.DataContext).group;
 
+            TagStoreElementTag clickedTag = new TagStoreElementTag { name = name, image = image, group = group };
 
+            if (selectedFile != null)
+            {
+                InsertTagOnFile(clickedTag, selectedFile);
+            }
+            else
+            {
+                System.Windows.Forms.MessageBox.Show("No file", "No file selected", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+        }
+
+        private void RemoveTagOnFile(string name)
+        {
+            foreach (var item in selectedFile.filetags)
+            {
+                if (item.name == name)
+                {
+                    selectedFile.filetags.Remove(item);
+                    SaveConfigurationButton.IsEnabled = true;
+                    break;
+                }
+            }
+        }
+
+        private void Button_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            System.Windows.Controls.Button source_button = (System.Windows.Controls.Button)sender;
+            string name = ((TagStoreElementTag)source_button.DataContext).name;
+            RemoveTagOnFile(name);
+        }
+
+        private void lvUsersColumnHeader_Click(object sender, RoutedEventArgs e)
+        {
+            GridViewColumnHeader column = (sender as GridViewColumnHeader);
+            string sortBy = column.Tag.ToString();
+            if (listViewSortCol != null)
+            {
+                AdornerLayer.GetAdornerLayer(listViewSortCol).Remove(listViewSortAdorner);
+                listboxRoot.Items.SortDescriptions.Clear();
+            }
+
+            ListSortDirection newDir = ListSortDirection.Ascending;
+            if (listViewSortCol == column && listViewSortAdorner.Direction == newDir)
+                newDir = ListSortDirection.Descending;
+
+            listViewSortCol = column;
+            listViewSortAdorner = new SortAdorner(listViewSortCol, newDir);
+            AdornerLayer.GetAdornerLayer(listViewSortCol).Add(listViewSortAdorner);
+            listboxRoot.Items.SortDescriptions.Add(new SortDescription(sortBy, newDir));
+        }
+
+        public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
+        {
+            if (depObj != null)
+            {
+                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+                {
+                    DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
+                    if (child != null && child is T)
+                    {
+                        yield return (T)child;
+                    }
+
+                    foreach (T childOfChild in FindVisualChildren<T>(child))
+                    {
+                        yield return childOfChild;
+                    }
+                }
+            }
+        }
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            IEnumerable<System.Windows.Controls.Button> elements = FindVisualChildren<System.Windows.Controls.Button>(this).Where(x => x.Tag != null && x.Tag.ToString() == "tagtag");
+            foreach (System.Windows.Controls.Button button in elements)
+            {
+                button.Width = slider.Value;
+                button.Height = slider.Value;
+            }
+        }
     }
 }
-
