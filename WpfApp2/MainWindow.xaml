@@ -11,6 +11,7 @@
 
         <CollectionViewSource Source="{Binding Path=tagList}" x:Key="categories">
             <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="name" />
                 <PropertyGroupDescription PropertyName="group" />
             </CollectionViewSource.GroupDescriptions>
         </CollectionViewSource>
@@ -234,13 +235,14 @@
                 </Grid.RowDefinitions>
 
                 <Label Grid.Column="0" Grid.Row="0" x:Name="label" Content="Name" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="2"/>
-                <TextBox Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" x:Name="Tag_Name_Textbox" AcceptsReturn="false" Text="{Binding Path=selectedTag.name, Mode=OneWay}" TextWrapping="Wrap" TextChanged="Tag_Name_Textbox_TextChanged" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="2"/>
+                <TextBox Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" x:Name="Tag_Name_Textbox" AcceptsReturn="false" Text="{Binding selectedTag.name, Mode=OneWay}" TextWrapping="Wrap" TextChanged="Tag_Name_Textbox_TextChanged" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="2"/>
 
                 <Label Grid.Column="0" Grid.Row="1" x:Name="label_Copy1" Content="Group" Margin="2"/>
                 <TextBox Grid.Column="1" Grid.Row="1"  Grid.ColumnSpan="2" x:Name="Tag_Name_Group" AcceptsReturn="false" Text="{Binding selectedTag.group, Mode=OneWay}" TextWrapping="Wrap" TextChanged="Tag_Name_Textbox_TextChanged" Margin="2"/>
 
                 <Label Grid.Column="0" Grid.Row="2" x:Name="label_Copy" Content="Image" Margin="2" />
-                <TextBox Grid.Column="1" Grid.Row="2" x:Name="Tag_Image_Textbox" AcceptsReturn="false" Text="{Binding Path=selectedTag.image, Mode=OneWay}"  TextWrapping="NoWrap" Margin="2"/>
+                <TextBox Grid.Column="1" Grid.Row="2" x:Name="Tag_Image_Textbox" AcceptsReturn="false" Text="{Binding selectedTag.image, Mode=TwoWay}"  TextWrapping="NoWrap" TextChanged="Tag_Name_Textbox_TextChanged" Margin="2"/>
+                
                 <Button Grid.Column="2" Grid.Row="2" x:Name="search_image_button" Click="Search_Image_Button_Click" Margin="2" HorizontalAlignment="Center"  VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
                     <Image Source="folder.png" Cursor="Hand"/>
                 </Button>

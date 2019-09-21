@@ -29,7 +29,6 @@ namespace WpfApp2
     /// </summary>
     /// 
 
-
     public class SortAdorner : Adorner
     {
         private static Geometry ascGeometry =
@@ -125,6 +124,7 @@ namespace WpfApp2
                 {
                     if (MainWindow.CONFIGURATION.tagStore != null)
                     {
+                        //System.Windows.Forms.MessageBox.Show("Estoy en el get");
                         foreach (var item in MainWindow.CONFIGURATION.tagStore)
                         {
                             _tagList.Add(item);
@@ -431,7 +431,7 @@ namespace WpfApp2
 
         private void ObtainFilesChanges()
         {
-            List<string> taglist = new List<string>();
+            List<string> filetaglist = new List<string>();
             List<FileListElement> allfiles = new List<FileListElement>();
 
             foreach (var item in fileList)
@@ -450,11 +450,11 @@ namespace WpfApp2
 
                     foreach (var tag in item.filetags)
                     {
-                        taglist.Add(tag.name);
+                        filetaglist.Add(tag.name);
                     }
-                    element.tags = taglist.ToArray();
+                    element.tags = filetaglist.ToArray();
                     allfiles.Add(element);
-                    taglist.Clear();
+                    filetaglist.Clear();
                 }
 
             }
@@ -677,4 +677,3 @@ namespace WpfApp2
         }
     }
 }
-
