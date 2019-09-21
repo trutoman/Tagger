@@ -9,7 +9,7 @@
 
     <Window.Resources>
 
-        <CollectionViewSource Source="{Binding Path=tagList}" x:Key="categories">
+        <CollectionViewSource Source="{Binding Path=ttag}" x:Key="categories">
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="name" />
                 <PropertyGroupDescription PropertyName="group" />
@@ -95,9 +95,36 @@
             </ListView.View>
         </ListView>
 
-        <ListBox Grid.Column="1" Grid.Row="1" x:Name="tagImageList" ItemsSource="{Binding Source={StaticResource categories}}" SelectedItem="{Binding Path=selectedTag}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="5,5,16,5" >
+        <ListBox Grid.Column="1" Grid.Row="1" x:Name="tagImageList" ItemsSource="{Binding Source=tagList}" SelectedItem="{Binding Path=selectedTag}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="5,5,16,5" >
 
             <!--// Truco para que itemselected cambie bien, no lo entiendo pero funciona-->
+
+            <ListBox.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.Panel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel Orientation="Vertical" />
+                        </ItemsPanelTemplate>
+                    </GroupStyle.Panel>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="{x:Type GroupItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        <Expander
+                                        Padding="0"                                           
+                                        BorderThickness="0"
+                                        Header="{Binding Name}"
+                                        IsExpanded="True">
+                                            <ItemsPresenter/>
+                                        </Expander>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
+                </GroupStyle>
+            </ListBox.GroupStyle>
 
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}">

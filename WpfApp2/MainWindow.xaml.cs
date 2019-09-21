@@ -184,6 +184,12 @@ namespace WpfApp2
             this.tagList.CollectionChanged += this.CollectionChangeHandler;
             InitializeComponent();
 
+            ICollectionView view = CollectionViewSource.GetDefaultView(tagList);
+            view.GroupDescriptions.Add(new PropertyGroupDescription("group"));
+            view.SortDescriptions.Add(new SortDescription("group", ListSortDirection.Ascending));
+            view.SortDescriptions.Add(new SortDescription("name", ListSortDirection.Ascending));
+            tagImageList.ItemsSource = view;
+
             //CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(listboxRoot.ItemsSource);            
             //view.SortDescriptions.Add(new SortDescription("name", ListSortDirection.Ascending));
             //view.SortDescriptions.Add(new SortDescription("size", ListSortDirection.Ascending));
