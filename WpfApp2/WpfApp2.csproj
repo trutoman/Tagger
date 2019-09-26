@@ -144,5 +144,17 @@
   <ItemGroup>
     <Resource Include="tagOK.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="copy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="paste.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="addtag.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="removetag.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -84,6 +84,7 @@ namespace WpfApp2
             public string path { get; set; }
             public string name { get; set; }
             public string size { get; set; }
+            public string dir { get; set; }
             public bool tagged { get; set; }
             public ObservableCollection<TagStoreElementTag> filetags { get; set; }
         }
@@ -221,6 +222,11 @@ namespace WpfApp2
             element.path = file;
             element.name = System.IO.Path.GetFileName(file);
             element.size = File_Size(file);
+
+            string path1 = System.IO.Path.GetDirectoryName(file);
+            string result = path1.Substring(BASE_DIR.Length).TrimStart(System.IO.Path.DirectorySeparatorChar);
+            element.dir = result;
+
             element.tagged = false;
 
             if (CONFIGURATION.file != null)
@@ -605,7 +611,18 @@ namespace WpfApp2
 
             if (selectedFile != null)
             {
-                InsertTagOnFile(clickedTag, selectedFile);
+                if (listboxRoot.SelectedItems.Count > 0)
+                {
+                    List<FileView> sliceFiles = new List<FileView>();
+                    foreach (var item in listboxRoot.SelectedItems)
+                    {
+                        sliceFiles.Add((FileView)item);                        
+                    }
+                    foreach (FileView file in sliceFiles)
+                    {
+                        InsertTagOnFile(clickedTag, file);
+                    }
+                }
             }
             else
             {
