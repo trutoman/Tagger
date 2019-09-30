@@ -4,8 +4,6 @@ using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -15,12 +13,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Runtime.CompilerServices;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Xml.Serialization;
 using System.Security.Cryptography;
 using System.Collections.Specialized;
-
 
 namespace WpfApp2
 {
@@ -96,6 +91,24 @@ namespace WpfApp2
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private ObservableCollection<TagStoreElementTag> _filterTags = new ObservableCollection<TagStoreElementTag>();
+        public ObservableCollection<TagStoreElementTag> filterTags
+        {
+            get
+            {
+                return _filterTags;
+            }
+
+            set
+            {
+                if (_filterTags != value)
+                {
+                    _filterTags = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         private ObservableCollection<FileView> _fileList = new ObservableCollection<FileView>();
@@ -480,7 +493,9 @@ namespace WpfApp2
             try
             {
                 // Taglist changes are alredy done because of Changeevent over tagList.
+                CONFIGURATION.rootDir = BASE_DIR;
                 ObtainFilesChanges();
+                CONFIGURATION.numFiles = CONFIGURATION.file.Length.ToString();
                 string pathFileSerialized = System.IO.Path.Combine(BASE_DIR, CONFIG_FILENAME);
                 XmlSerializer out_xmlSerializer = new XmlSerializer(typeof(RootElement));
 
@@ -609,24 +624,47 @@ namespace WpfApp2
 
             TagStoreElementTag clickedTag = new TagStoreElementTag { name = name, image = image, group = group };
 
-            if (selectedFile != null)
+            TabItem ti = Tabs1.SelectedItem as TabItem;
+            if (ti.Name == "file")
             {
-                if (listboxRoot.SelectedItems.Count > 0)
+
+                if (selectedFile != null)
                 {
-                    List<FileView> sliceFiles = new List<FileView>();
-                    foreach (var item in listboxRoot.SelectedItems)
+                    if (listboxRoot.SelectedItems.Count > 0)
                     {
-                        sliceFiles.Add((FileView)item);                        
-                    }
-                    foreach (FileView file in sliceFiles)
-                    {
-                        InsertTagOnFile(clickedTag, file);
+                        List<FileView> sliceFiles = new List<FileView>();
+                        foreach (var item in listboxRoot.SelectedItems)
+                        {
+                            sliceFiles.Add((FileView)item);
+                        }
+                        foreach (FileView file in sliceFiles)
+                        {
+                            InsertTagOnFile(clickedTag, file);
+                        }
                     }
                 }
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show("No file", "No file selected", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
             }
-            else
+
+            else if (ti.Name == "filter")
             {
-                System.Windows.Forms.MessageBox.Show("No file", "No file selected", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                bool found = false;
+                //System.Windows.Forms.MessageBox.Show("");
+                foreach (var item in filterTags)
+                {
+                    if (item.name == clickedTag.name)
+                    {
+                        found = true;
+                    }
+                }
+                if (!found)
+                {
+                    filterTags.Add(clickedTag);
+                }
+                //FilterTags.Items.Refresh();
             }
         }
 

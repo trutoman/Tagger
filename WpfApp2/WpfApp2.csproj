@@ -159,5 +159,8 @@
   <ItemGroup>
     <Resource Include="filter.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="multiple.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
