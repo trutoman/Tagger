@@ -220,9 +220,6 @@ namespace WpfApp2
 
             if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                labelrootpath.Content = "";
-                labelrootpath.Content = fbd.SelectedPath;
-
                 return fbd.SelectedPath;
             }
             return string.Empty;
@@ -403,12 +400,22 @@ namespace WpfApp2
                 }
 
                 populate_listbox();
+                labelrootpath.Content = "";
+                labelrootpath.Content = "Tagger at " + BASE_DIR + " : ";
+                labelrootpath.Content += " Total files: " + listboxRoot.Items.Count.ToString();
+                labelrootpath.Content += " Tagged files: " + CONFIGURATION.file.Length.ToString();
+                labelrootpath.Content += " Total tags: " + CONFIGURATION.tagStore.Length.ToString();
             }
             else
             {
                 BASE_DIR = file_path;
                 SaveConfigurationButton.IsEnabled = true;
             }
+        }
+
+        private void DeleteKeyEvent()
+        {
+
         }
 
         //private void Generate_Button_Click(object sender, RoutedEventArgs e)
@@ -433,8 +440,15 @@ namespace WpfApp2
         {
             if (listboxRoot.SelectedItem != null)
             {
-                System.Diagnostics.Process.Start(selectedFile.path);
-                //System.Windows.Forms.MessageBox.Show(LISTBOX_INDEX.ToString());
+                if (File.Exists(selectedFile.path))
+                {
+                    System.Diagnostics.Process.Start(selectedFile.path);
+                    //System.Windows.Forms.MessageBox.Show(LISTBOX_INDEX.ToString());
+                }
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show("El fichero no existe", "File not exists", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
             }
         }
 
@@ -735,6 +749,96 @@ namespace WpfApp2
                 button.Width = slider.Value;
                 button.Height = slider.Value;
             }
+        }
+
+        private void DeleteFile()
+        {
+
+            if (listboxRoot.SelectedItems.Count > 0)
+            {
+                List<FileView> sliceFiles = new List<FileView>();
+                foreach (var item in listboxRoot.SelectedItems)
+                {
+                    sliceFiles.Add((FileView)item);
+                }
+                foreach (FileView file in sliceFiles)
+                {
+                    if (File.Exists(file.path))
+                    {
+                        if (System.Windows.MessageBox.Show("Remove " + file.name, 
+                            "Remove file", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                        {
+                            try
+                            {
+                                File.Delete(file.path);
+                                fileList.Remove(file);
+                                //ICollectionView view = CollectionViewSource.GetDefaultView(listboxRoot.ItemsSource);
+                                //view.Refresh();
+                            }
+                            catch (FileNotFoundException e)
+                            {
+                                System.Windows.MessageBox.Show($"The file was not found: '{e}'");
+                            }
+                            catch (DirectoryNotFoundException e)
+                            {
+                                System.Windows.MessageBox.Show($"The directory was not found: '{e}'");
+                            }
+                            catch (IOException e)
+                            {
+                                System.Windows.MessageBox.Show($"The file could not be deleted: '{e}'");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // A way to get a command from interface
+        public class ActionCommand : ICommand
+        {
+            private readonly Action _action;
+
+            public ActionCommand(Action action)
+            {
+                _action = action;
+            }
+
+            public void Execute(object parameter)
+            {
+                _action();
+            }
+
+            public bool CanExecute(object parameter)
+            {
+                return true;
+            }
+
+            public event EventHandler CanExecuteChanged;
+        }
+
+        private ICommand someCommand;
+        public ICommand SomeCommand
+        {
+            get
+            {
+                return someCommand
+                    ?? (someCommand = new ActionCommand(() =>
+                    {
+                        DeleteFile();
+                    }));
+            }
+        }
+
+        //////////////////////////////////////////
+
+        private void AndButton_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Controls.Button source_button = (System.Windows.Controls.Button)sender;
+            string name = ((TagStoreElementTag)source_button.DataContext).name;
+            string image = "";
+            string group = "";
+
+            TagStoreElementTag clickedTag = new TagStoreElementTag { name = name, image = image, group = group };
         }
     }
 }
