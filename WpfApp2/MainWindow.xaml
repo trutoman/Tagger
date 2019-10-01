@@ -60,7 +60,7 @@
 
         </Grid>
 
-        <ListView Grid.Column="0" Grid.Row="1" x:Name="listboxRoot" ItemsSource="{Binding fileList}" Margin="16,5,5,5" Background="White" SelectedItem="{Binding Path=selectedFile}" MouseDoubleClick="ListboxRoot_MouseDoubleClick" SelectionChanged="ListboxRoot_SelectionChanged_1" SelectionMode="Extended">
+        <ListView Grid.Column="0" Grid.Row="1" x:Name="listboxRoot" ItemsSource="{Binding fileList}" Margin="16,5,5,5" Background="White" SelectedItem="{Binding Path=selectedFile}" MouseDoubleClick="ListboxRoot_MouseDoubleClick" SelectionMode="Extended">
 
             <ListView.InputBindings>
                 <KeyBinding Key="Delete" Command="{Binding SomeCommand}"/>

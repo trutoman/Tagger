@@ -400,11 +400,7 @@ namespace WpfApp2
                 }
 
                 populate_listbox();
-                labelrootpath.Content = "";
-                labelrootpath.Content = "Tagger at " + BASE_DIR + " : ";
-                labelrootpath.Content += " Total files: " + listboxRoot.Items.Count.ToString();
-                labelrootpath.Content += " Tagged files: " + CONFIGURATION.file.Length.ToString();
-                labelrootpath.Content += " Total tags: " + CONFIGURATION.tagStore.Length.ToString();
+                RefreshInfo();
             }
             else
             {
@@ -413,9 +409,13 @@ namespace WpfApp2
             }
         }
 
-        private void DeleteKeyEvent()
+        private void RefreshInfo()
         {
-
+            labelrootpath.Content = "";
+            labelrootpath.Content = "Tagger at " + BASE_DIR + " : ";
+            labelrootpath.Content += " Total files: " + listboxRoot.Items.Count.ToString();
+            labelrootpath.Content += " Tagged files: " + CONFIGURATION.file.Length.ToString();
+            labelrootpath.Content += " Total tags: " + CONFIGURATION.tagStore.Length.ToString();
         }
 
         //private void Generate_Button_Click(object sender, RoutedEventArgs e)
@@ -452,19 +452,29 @@ namespace WpfApp2
             }
         }
 
-        private void ListboxRoot_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
+        private void RemoveTaggedElement (FileView file)
         {
             if (CONFIGURATION.file != null)
             {
-                for (int i = 0; i < CONFIGURATION.file.Length; i++)
+                try
                 {
-                    // if (selectedFile.path == CONFIGURATION.file[i].name)
-                    //{
-                    // File exist in CONFIGURATION so it is tagged                    
-                    // ACTUAL_TAGS = CONFIGURATION.file[i].tags;
-                    //actualTagsGrid.ItemsSource = selectedFile.filetags;                    
-                    // }
+                    ObtainFilesChanges();
+                    CONFIGURATION.numFiles = CONFIGURATION.file.Length.ToString();
+                    string pathFileSerialized = System.IO.Path.Combine(BASE_DIR, CONFIG_FILENAME);
+                    XmlSerializer out_xmlSerializer = new XmlSerializer(typeof(RootElement));
+
+                    using (var sw = new StreamWriter(pathFileSerialized))
+                    {
+                        RootElement conf1 = CONFIGURATION;
+                        out_xmlSerializer.Serialize(sw, conf1);
+                    }
                 }
+                catch (Exception ex)
+                {
+                    System.Windows.Forms.MessageBox.Show(ex.Message);
+                }
+                SaveConfigurationButton.IsEnabled = false;
+                RefreshInfo();
             }
         }
 
@@ -524,6 +534,7 @@ namespace WpfApp2
                 System.Windows.Forms.MessageBox.Show(ex.Message);
             }
             SaveConfigurationButton.IsEnabled = false;
+            RefreshInfo();
         }
 
         private void AddTagbutton_Click(object sender, RoutedEventArgs e)
@@ -566,6 +577,7 @@ namespace WpfApp2
             tagList.OrderBy(n => n.name);
             MainWindow.CONFIGURATION.tagStore = tagList.ToArray();
             SaveConfigurationButton.IsEnabled = true;
+            RefreshInfo();
         }
 
         private void Tag_Name_Textbox_TextChanged(object sender, TextChangedEventArgs e)
@@ -593,7 +605,6 @@ namespace WpfApp2
 
         private void InsertTagOnFile(TagStoreElementTag tagName, FileView file)
         {
-
             if (!file.tagged)
             {
 
@@ -627,6 +638,7 @@ namespace WpfApp2
                     SaveConfigurationButton.IsEnabled = true;
                 }
             }
+            RefreshInfo();
         }
 
         private void TagStoreButton_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -693,6 +705,7 @@ namespace WpfApp2
                     break;
                 }
             }
+            RefreshInfo();
         }
 
         private void Button_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -772,6 +785,10 @@ namespace WpfApp2
                             {
                                 File.Delete(file.path);
                                 fileList.Remove(file);
+                                if (file.tagged)
+                                {
+                                    RemoveTaggedElement(file);
+                                }
                                 //ICollectionView view = CollectionViewSource.GetDefaultView(listboxRoot.ItemsSource);
                                 //view.Refresh();
                             }
