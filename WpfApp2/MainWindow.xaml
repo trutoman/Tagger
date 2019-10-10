@@ -8,6 +8,23 @@
         Title="Tagger" Height="530" Width="1040">
 
     <Window.Resources>
+
+        <DataTemplate x:Key="smallTags">
+            <Grid Background="{x:Null}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="20" />
+                </Grid.RowDefinitions>
+                <Button Grid.Column="0" Grid.Row="0" Height="30" Width="30" MouseDoubleClick="Button_MouseDoubleClick" >
+                    <Image Source="{Binding image}" Cursor="Hand"/>
+                </Button>
+                <Label Cursor="Hand" Grid.Column="0" Grid.Row="1" Content="{Binding name, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="6" Padding="0" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+            </Grid>
+        </DataTemplate>
+        
     </Window.Resources>
 
     <Grid>
@@ -43,11 +60,11 @@
                 </StackPanel.Resources>
 
                 <Button x:Name="search_dir_button" VerticalAlignment="Top" Click="Search_Dir_Button_Click"  Height="41" Width="45" HorizontalAlignment="Left"  VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
-                    <Image Source="folder.png" Cursor="Hand" Width="32" />
+                    <Image Source="folder.png" Cursor="Hand"  />
                 </Button>
 
                 <Button x:Name="SaveConfigurationButton"  VerticalAlignment="Top" Click="SaveConfigurationButtonClick" Height="41" Width="45" HorizontalAlignment="Left" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
-                    <Image Source="save.png" Cursor="Hand" Width="32" />
+                    <Image Source="save.png" Cursor="Hand" Margin="2" />
                 </Button>
 
                 <Button x:Name="applyFilter" Grid.Column="1" Grid.Row="0" Click="AddTagbutton_Click"  Height="41" Width="45" HorizontalAlignment="Left" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Top">
@@ -60,7 +77,7 @@
 
         </Grid>
 
-        <ListView Grid.Column="0" Grid.Row="1" x:Name="listboxRoot" ItemsSource="{Binding fileList}" Margin="16,5,5,5" Background="White" SelectedItem="{Binding Path=selectedFile}" MouseDoubleClick="ListboxRoot_MouseDoubleClick" SelectionMode="Extended">
+        <ListView Grid.Column="0" Grid.Row="1" x:Name="listboxRoot" ItemsSource="{Binding fileList}" Margin="16,5,5,5" Background="White" SelectedItem="{Binding Path=selectedFile}" MouseDoubleClick="ListboxRoot_MouseDoubleClick" SelectionMode="Extended" SelectionChanged="ListboxRoot_SelectionChanged">
 
             <ListView.InputBindings>
                 <KeyBinding Key="Delete" Command="{Binding SomeCommand}"/>
@@ -198,7 +215,7 @@
 
         </Grid>
 
-        <Grid Grid.Column="0" Grid.Row="3" Margin="16,5,5,16">
+        <Grid Name="filetagsGrid" Grid.Column="0" Grid.Row="3" Margin="16,5,5,16">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="60" />
@@ -219,7 +236,7 @@
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="20" />
                             </Grid.RowDefinitions>
-                            <Button Grid.Column="0" Grid.Row="0" Height="70" Width="70" MouseDoubleClick="Button_MouseDoubleClick" >
+                            <Button Grid.Column="0" Grid.Row="0" Height="70" Width="70" MouseDoubleClick="Button_MouseDoubleClick" Tag="filefile">
                                 <Image Source="{Binding image}" Cursor="Hand"/>
                             </Button>
                             <Label Cursor="Hand" Grid.Column="0" Grid.Row="1" Content="{Binding name, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" Padding="0" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
@@ -241,11 +258,11 @@
                         <Setter Property="Margin" Value="5,5,0,0"/>
                     </Style>
                 </StackPanel.Resources>
-                <Button x:Name="addTagButton" VerticalAlignment="Center" Click="Search_Dir_Button_Click" Height="41" Width="45" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
-                    <Image Source="copy.png" Cursor="Hand" Width="32" />
+                <Button x:Name="copyTagButton" VerticalAlignment="Center" Height="41" Width="45" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Click="CopyTagButton_Click">
+                    <Image Source="copy.png" Cursor="Hand" Margin="1"/>
                 </Button>
-                <Button  x:Name="removeTagButton" VerticalAlignment="Center" Click="Search_Dir_Button_Click"  Height="41" Width="45" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
-                    <Image Source="paste.png" Cursor="Hand" Width="32" IsEnabled="False" />
+                <Button  x:Name="pasteTagButton" VerticalAlignment="Center"  Height="41" Width="45" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="False" Click="PasteTagButton_Click">
+                    <Image Source="paste.png" Cursor="Hand" IsEnabled="False" Margin="1" />
                 </Button>
             </StackPanel>
         </Grid>
@@ -309,7 +326,7 @@
                         </Grid>-->
 
                         <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" BorderThickness="1" BorderBrush="Black">
-                            <Image Source="{Binding selectedTag.image}" Height="90" Width="90" OpacityMask="Black"/>
+                            <Image Name="previewTagImage" Source="{Binding selectedTag.image}" Height="90" Width="90" OpacityMask="Black"/>
                         </Border>
                         <Label Grid.Column="1" Grid.Row="0" x:Name="label" Content="Name" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="2"/>
                         <TextBox Grid.Column="2" Grid.Row="0"  x:Name="Tag_Name_Textbox" AcceptsReturn="false" Text="{Binding selectedTag.name, Mode=OneWay}" TextWrapping="Wrap" TextChanged="Tag_Name_Textbox_TextChanged" VerticalContentAlignment="Center" Margin="2" UseLayoutRounding="True"/>

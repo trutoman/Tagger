@@ -50,7 +50,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>taggericon_UfL_icon.ico</ApplicationIcon>
+    <ApplicationIcon>tagger.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -166,7 +166,10 @@
     <Resource Include="multiple.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="taggericon_UfL_icon.ico" />
+    <Resource Include="tagger.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="cross.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -70,6 +70,7 @@ namespace WpfApp2
         private static string[] SUPPORTED_FILES = { ".mpg", ".avi", ".flv", ".mkv", ".mp4", ".mpeg", ".wmv", ".mov" };
         public static RootElement CONFIGURATION = new RootElement();
         public const int MAX_TAGS = 1024;
+        private ObservableCollection<TagStoreElementTag> tagCopiedList = new ObservableCollection<TagStoreElementTag>();
 
         private GridViewColumnHeader listViewSortCol = null;
         private SortAdorner listViewSortAdorner = null;
@@ -452,7 +453,7 @@ namespace WpfApp2
             }
         }
 
-        private void RemoveTaggedElement (FileView file)
+        private void RemoveTaggedElement(FileView file)
         {
             if (CONFIGURATION.file != null)
             {
@@ -567,6 +568,7 @@ namespace WpfApp2
                 tagList.Add(element);
                 tagList.OrderBy(n => n.name);
                 MainWindow.CONFIGURATION.tagStore = tagList.ToArray();
+                selectedTag = element;
             }
             SaveConfigurationButton.IsEnabled = true;
         }
@@ -778,7 +780,7 @@ namespace WpfApp2
                 {
                     if (File.Exists(file.path))
                     {
-                        if (System.Windows.MessageBox.Show("Remove " + file.name, 
+                        if (System.Windows.MessageBox.Show("Remove " + file.name,
                             "Remove file", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                         {
                             try
@@ -807,6 +809,7 @@ namespace WpfApp2
                         }
                     }
                 }
+                RefreshInfo();
             }
         }
 
@@ -856,6 +859,105 @@ namespace WpfApp2
             string group = "";
 
             TagStoreElementTag clickedTag = new TagStoreElementTag { name = name, image = image, group = group };
+        }
+
+
+        // Remove every control child as listbox and as button 
+        private void RemoveCopyAreaButton_Click(object sender, RoutedEventArgs e)
+        {
+            var myControl = sender as System.Windows.Controls.Button;
+            int rowindex = (int)myControl.GetValue(Grid.RowProperty);
+
+            foreach (UIElement control in filetagsGrid.Children)
+            {
+                var usercontrol1 = control as System.Windows.Controls.ListBox;
+                if (usercontrol1 != null)
+                {
+                    int childrowindex = (int)usercontrol1.GetValue(Grid.RowProperty);
+                    if (childrowindex == rowindex)
+                    {
+                        filetagsGrid.Children.Remove(control);
+                        filetagsGrid.RowDefinitions.RemoveAt(childrowindex);
+                        break;
+                    }
+                }
+            }
+            // Remove the button itself
+            filetagsGrid.Children.Remove(myControl);
+            //filetagsGrid.RowDefinitions.RemoveAt(1);
+            pasteTagButton.IsEnabled = false;
+        }
+
+        private void CopyTagButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (filetagsGrid.RowDefinitions.Count == 1)
+            {
+                RowDefinition newCopyRow = new RowDefinition();
+                GridLength length = new GridLength(100);
+                newCopyRow.Height = length;
+                filetagsGrid.RowDefinitions.Add(newCopyRow);
+            }
+
+            System.Windows.Controls.ListBox newList = new System.Windows.Controls.ListBox { DataContext = actualTagsGrid.DataContext };
+            //System.Windows.Controls.Image image = new System.Windows.Controls.Image()
+            //newControl.SetValue(Grid.ColumnSpanProperty, 2);
+            newList.ItemsSource = actualTagsGrid.ItemsSource;
+            newList.ItemTemplate = actualTagsGrid.ItemTemplate;
+            newList.ItemsPanel = actualTagsGrid.ItemsPanel;
+            filetagsGrid.Children.Add(newList);
+
+            System.Windows.Controls.Button button = new System.Windows.Controls.Button();
+            BitmapImage btm = new BitmapImage(new Uri("cross.png", UriKind.Relative));
+            Image image = new Image();
+            image.Source = btm;
+            //image.Stretch = Stretch.Fill;
+            image.Cursor = System.Windows.Input.Cursors.Hand;
+            button.Width = 45;
+            button.Height = 41;
+            button.Content = image;
+            button.AddHandler(System.Windows.Controls.Button.ClickEvent, new RoutedEventHandler(RemoveCopyAreaButton_Click));
+            filetagsGrid.Children.Add(button);
+
+            Grid.SetRow(button, 1);
+            Grid.SetColumn(button, 1);
+            Grid.SetRow(newList, 1);
+            Grid.SetColumn(newList, 0);
+
+            tagCopiedList = selectedFile.filetags;
+
+            pasteTagButton.IsEnabled = true;
+        }
+
+        private void PasteTagButton_Click(object sender, RoutedEventArgs e)
+        {
+            var myControl = sender as System.Windows.Controls.Button;
+            foreach (UIElement control in filetagsGrid.Children)
+            {
+                var usercontrol1 = control as System.Windows.Controls.ListBox;
+                if (usercontrol1 != null)
+                {
+                    int childrowindex = (int)usercontrol1.GetValue(Grid.RowProperty);
+                    if (childrowindex == 1)
+                    {
+                        //actualTagsGrid.ItemsSource = usercontrol1.ItemsSource;
+                    }
+                }
+            }
+
+            var item = listboxRoot.Items.GetItemAt(listboxRoot.SelectedIndex) as FileView;
+            item.tagged = true;
+            item.filetags = tagCopiedList;
+            selectedFile = null;
+            selectedFile = item;
+            listboxRoot.Items.Refresh();
+            SaveConfigurationButton.IsEnabled = true;
+            //selectedFile.tagged = true;
+            //selectedFile.filetags = tagCopiedList;
+        }
+
+        private void ListboxRoot_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }
