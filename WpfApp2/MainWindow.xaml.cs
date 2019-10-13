@@ -16,6 +16,7 @@ using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
 using System.Security.Cryptography;
 using System.Collections.Specialized;
+using System.Collections;
 
 namespace WpfApp2
 {
@@ -74,6 +75,44 @@ namespace WpfApp2
 
         private GridViewColumnHeader listViewSortCol = null;
         private SortAdorner listViewSortAdorner = null;
+
+        private static readonly string[] sizes = new[] { "BY", "KB", "MB", "GB", "TB" };
+
+        public class MyComparer : IComparer
+        {
+            ListSortDirection _direction;
+
+            public MyComparer(ListSortDirection direction)
+            {
+                _direction = direction;
+            }
+
+            public int Compare(object x, object y)
+            {
+                int returnValue = 0;
+
+                FileView left = x as FileView;
+                FileView right = y as FileView;
+
+                if (left != null && right != null)
+                {
+                    string leftScale = left.size.Substring(left.size.Length - 2);
+                    string rightScale = right.size.Substring(right.size.Length - 2);
+                    returnValue = Array.IndexOf(sizes, rightScale).CompareTo(Array.IndexOf(sizes, leftScale));
+
+                    if (returnValue == 0)
+                    {
+                        double leftValue = double.Parse(left.size.Substring(0, left.size.Length - 3));
+                        double rightValue = double.Parse(right.size.Substring(0, right.size.Length - 3));
+                        returnValue = rightValue.CompareTo(leftValue);
+                    }
+                }
+                if (this._direction == ListSortDirection.Ascending)
+                    return returnValue;
+                else
+                    return (-1*returnValue);
+            }
+        }
 
         public class FileView
         {
@@ -332,7 +371,8 @@ namespace WpfApp2
             SaveConfigurationButton.IsEnabled = false;
         }
 
-        private string File_Size(string filename)
+
+        private String FormatFileSize(string filename)
         {
             string[] sizes = { "BY", "KB", "MB", "GB", "TB" };
             double len = new FileInfo(filename).Length;
@@ -345,6 +385,25 @@ namespace WpfApp2
 
             // Adjust the format string to your preferences. For example "{0:0.#}{1}" would
             // show a single decimal place, and no space.
+            // 
+            string result = String.Format("{0:0.#} {1}", len, sizes[order]);
+            return result;
+        }
+
+
+        private string File_Size(string filename)
+        {
+            double len = new FileInfo(filename).Length;
+            int order = 0;
+            while (len >= 1024 && order < sizes.Length - 1)
+            {
+                order++;
+                len = len / 1024;
+            }
+
+            // Adjust the format string to your preferences. For example "{0:0.#}{1}" would
+            // show a single decimal place, and no space.
+            // String.Format("{0:0.#} {1}", len, sizes[order]);
             string result = String.Format("{0:0.#} {1}", len, sizes[order]);
             return result;
         }
@@ -367,7 +426,7 @@ namespace WpfApp2
                     FileListElement file_list_element = new FileListElement();
                     file_list_element.name = currentFile;
                     //file_list_element.checksum = CalculateMD5(currentFile);
-                    file_list_element.size = File_Size(currentFile);
+                    file_list_element.size = FormatFileSize(currentFile);
                     CONFIGURATION.file[counter] = file_list_element;
                     listboxRoot.Items.Add(currentFile);
                     counter++;
@@ -506,7 +565,6 @@ namespace WpfApp2
                     allfiles.Add(element);
                     filetaglist.Clear();
                 }
-
             }
 
             CONFIGURATION.file = allfiles.ToArray();
@@ -727,14 +785,23 @@ namespace WpfApp2
                 listboxRoot.Items.SortDescriptions.Clear();
             }
 
-            ListSortDirection newDir = ListSortDirection.Ascending;
-            if (listViewSortCol == column && listViewSortAdorner.Direction == newDir)
-                newDir = ListSortDirection.Descending;
+            ListSortDirection newOrderDirection = ListSortDirection.Ascending;
+            if (listViewSortCol == column && listViewSortAdorner.Direction == newOrderDirection)
+                newOrderDirection = ListSortDirection.Descending;
 
             listViewSortCol = column;
-            listViewSortAdorner = new SortAdorner(listViewSortCol, newDir);
+            listViewSortAdorner = new SortAdorner(listViewSortCol, newOrderDirection);
             AdornerLayer.GetAdornerLayer(listViewSortCol).Add(listViewSortAdorner);
-            listboxRoot.Items.SortDescriptions.Add(new SortDescription(sortBy, newDir));
+
+            if (sortBy == "size")
+            {
+                var view = (ListCollectionView)CollectionViewSource.GetDefaultView(fileList); //Items is an ObservableCollection<T> 
+                view.CustomSort = new MyComparer(newOrderDirection);
+            }
+            else
+            {
+                listboxRoot.Items.SortDescriptions.Add(new SortDescription(sortBy, newOrderDirection));
+            }
         }
 
         public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
@@ -801,6 +868,10 @@ namespace WpfApp2
                             catch (DirectoryNotFoundException e)
                             {
                                 System.Windows.MessageBox.Show($"The directory was not found: '{e}'");
+                            }
+                            catch (UnauthorizedAccessException e)
+                            {
+                                System.Windows.MessageBox.Show($"Unauthorized access: '{e}'");
                             }
                             catch (IOException e)
                             {
