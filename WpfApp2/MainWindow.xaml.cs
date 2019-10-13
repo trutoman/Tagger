@@ -243,10 +243,6 @@ namespace WpfApp2
             view.SortDescriptions.Add(new SortDescription("group", ListSortDirection.Ascending));
             view.SortDescriptions.Add(new SortDescription("name", ListSortDirection.Ascending));
             tagImageList.ItemsSource = view;
-
-            //CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(listboxRoot.ItemsSource);            
-            //view.SortDescriptions.Add(new SortDescription("name", ListSortDirection.Ascending));
-            //view.SortDescriptions.Add(new SortDescription("size", ListSortDirection.Ascending));
         }
 
         private void PopulateTagGrid()
@@ -566,10 +562,8 @@ namespace WpfApp2
                     filetaglist.Clear();
                 }
             }
-
             CONFIGURATION.file = allfiles.ToArray();
         }
-
 
         private void SaveConfigurationButtonClick(object sender, RoutedEventArgs e)
         {
@@ -667,7 +661,6 @@ namespace WpfApp2
         {
             if (!file.tagged)
             {
-
                 var modifiable = fileList.FirstOrDefault(i => i.path == file.path);
                 modifiable.name = file.name;
                 modifiable.path = file.path;

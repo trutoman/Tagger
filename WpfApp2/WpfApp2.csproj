@@ -50,7 +50,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>tagger.ico</ApplicationIcon>
+    <ApplicationIcon>Images\tagger.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -127,49 +127,49 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="folder.png" />
+    <Resource Include="Images\folder.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="save.png" />
+    <Resource Include="Images\save.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="verification.png" />
+    <Resource Include="Images\verification.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="delete.png" />
+    <Resource Include="Images\delete.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="tag.png" />
+    <Resource Include="Images\tag.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="UNtag.png" />
+    <Resource Include="Images\UNtag.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="tagOK.png" />
+    <Resource Include="Images\tagOK.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="copy.png" />
+    <Resource Include="Images\copy.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="paste.png" />
+    <Resource Include="Images\paste.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="addtag.png" />
+    <Resource Include="Images\addtag.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="removetag.png" />
+    <Resource Include="Images\removetag.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="filter.png" />
+    <Resource Include="Images\filter.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="multiple.png" />
+    <Resource Include="Images\multiple.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="tagger.ico" />
+    <Resource Include="Images\tagger.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="cross.png" />
+    <Resource Include="Images\cross.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -24,6 +24,15 @@
                 <Label Cursor="Hand" Grid.Column="0" Grid.Row="1" Content="{Binding name, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="6" Padding="0" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
             </Grid>
         </DataTemplate>
+
+        <BitmapImage x:Key="folder" UriSource="/Images/folder.png" />
+        <BitmapImage x:Key="save" UriSource="/Images/save.png" />
+        <BitmapImage x:Key="filter" UriSource="/Images/filter.png" />
+        <BitmapImage x:Key="copy" UriSource="/Images/copy.png" />
+        <BitmapImage x:Key="paste" UriSource="/Images/paste.png" />
+        <BitmapImage x:Key="multiple" UriSource="/Images/multiple.png" />
+        <BitmapImage x:Key="removetag" UriSource="/Images/removetag.png" />
+        <BitmapImage x:Key="addtag" UriSource="/Images/addtag.png" />
         
     </Window.Resources>
 
@@ -60,15 +69,15 @@
                 </StackPanel.Resources>
 
                 <Button x:Name="search_dir_button" VerticalAlignment="Top" Click="Search_Dir_Button_Click"  Height="41" Width="45" HorizontalAlignment="Left"  VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
-                    <Image Source="folder.png" Cursor="Hand"  />
+                    <Image Source="{StaticResource folder}" Cursor="Hand"  />
                 </Button>
 
                 <Button x:Name="SaveConfigurationButton"  VerticalAlignment="Top" Click="SaveConfigurationButtonClick" Height="41" Width="45" HorizontalAlignment="Left" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
-                    <Image Source="save.png" Cursor="Hand" Margin="2" />
+                    <Image Source="{StaticResource save}" Cursor="Hand" Margin="2" />
                 </Button>
 
                 <Button x:Name="applyFilter" Grid.Column="1" Grid.Row="0" Click="AddTagbutton_Click"  Height="41" Width="45" HorizontalAlignment="Left" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Top">
-                    <Image Source="filter.png" Cursor="Hand"/>
+                    <Image Source="{StaticResource filter}" Cursor="Hand"/>
                 </Button>
 
             </StackPanel>
@@ -259,10 +268,10 @@
                     </Style>
                 </StackPanel.Resources>
                 <Button x:Name="copyTagButton" VerticalAlignment="Center" Height="41" Width="45" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Click="CopyTagButton_Click">
-                    <Image Source="copy.png" Cursor="Hand" Margin="1"/>
+                    <Image Source="{StaticResource copy}" Cursor="Hand" Margin="1"/>
                 </Button>
                 <Button  x:Name="pasteTagButton" VerticalAlignment="Center"  Height="41" Width="45" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="False" Click="PasteTagButton_Click">
-                    <Image Source="paste.png" Cursor="Hand" IsEnabled="False" Margin="1" />
+                    <Image Source="{StaticResource paste}" Cursor="Hand" IsEnabled="False" Margin="1" />
                 </Button>
             </StackPanel>
         </Grid>
@@ -271,7 +280,7 @@
             <TabItem Name="file">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <Image Source="multiple.png" Width="25" Height="25" Margin="0,0,8,0"/>
+                        <Image Source="{StaticResource multiple}" Width="25" Height="25" Margin="0,0,8,0"/>
                         <TextBlock Text="Edit tags" VerticalAlignment="Center" />
                     </StackPanel>
                 </TabItem.Header>
@@ -345,7 +354,7 @@
                             <TextBox x:Name="Tag_Image_Textbox" AcceptsReturn="false" Text="{Binding selectedTag.image, Mode=TwoWay}"  TextWrapping="NoWrap" TextChanged="Tag_Name_Textbox_TextChanged" Margin="2" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center"/>
 
                             <Button x:Name="search_image_button" Click="Search_Image_Button_Click" Margin="2" HorizontalAlignment="Right"  VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
-                                <Image Source="folder.png" Cursor="Hand"/>
+                                <Image Source="{StaticResource folder}" Cursor="Hand"/>
                             </Button>
 
                         </Grid>
@@ -353,11 +362,11 @@
                         <StackPanel Grid.Column="4" Grid.Row="0" Grid.RowSpan="3" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
 
                             <Button x:Name="okTagButton" Click="AddTagbutton_Click" Margin="2" HorizontalAlignment="Right" Height="41" Width="45" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
-                                <Image Source="addtag.png" Cursor="Hand"/>
+                                <Image Source="{StaticResource addtag}" Cursor="Hand"/>
                             </Button>
 
                             <Button x:Name="removeTagbutton" Click="RemoveTagbutton_Click" Margin="2" HorizontalAlignment="Right" Height="41" Width="45" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
-                                <Image Source="removetag.png" Cursor="Hand" VerticalAlignment="Top"/>
+                                <Image Source="{StaticResource removetag}" Cursor="Hand" VerticalAlignment="Top"/>
                             </Button>
 
                         </StackPanel>
@@ -371,7 +380,7 @@
             <TabItem Name="filter">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <Image Source="filter.png" Width="25" Height="25" Margin="0,0,8,0"/>
+                        <Image Source="{StaticResource filter}" Width="25" Height="25" Margin="0,0,8,0"/>
                         <TextBlock Text="Edit filter" VerticalAlignment="Center" />
                     </StackPanel>
                 </TabItem.Header>
