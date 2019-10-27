@@ -382,7 +382,7 @@ namespace WpfApp2
             // Adjust the format string to your preferences. For example "{0:0.#}{1}" would
             // show a single decimal place, and no space.
             // 
-            string result = String.Format("{0:0.#} {1}", len, sizes[order]);
+            string result = String.Format("{0:0.##} {1}", len, sizes[order]);
             return result;
         }
 
@@ -400,7 +400,7 @@ namespace WpfApp2
             // Adjust the format string to your preferences. For example "{0:0.#}{1}" would
             // show a single decimal place, and no space.
             // String.Format("{0:0.#} {1}", len, sizes[order]);
-            string result = String.Format("{0:0.#} {1}", len, sizes[order]);
+            string result = String.Format("{0:0.##} {1}", len, sizes[order]);
             return result;
         }
 
@@ -971,10 +971,11 @@ namespace WpfApp2
             filetagsGrid.Children.Add(newList);
 
             System.Windows.Controls.Button button = new System.Windows.Controls.Button();
-            BitmapImage btm = new BitmapImage(new Uri("cross.png", UriKind.Relative));
+            //BitmapImage btm = new BitmapImage(new Uri("Images/cross.png", UriKind.Relative));
+
+            BitmapImage btm = this.Resources["cross"] as BitmapImage;
             Image image = new Image();
             image.Source = btm;
-            //image.Stretch = Stretch.Fill;
             image.Cursor = System.Windows.Input.Cursors.Hand;
             button.Width = 45;
             button.Height = 41;

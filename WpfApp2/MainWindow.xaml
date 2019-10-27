@@ -33,6 +33,7 @@
         <BitmapImage x:Key="multiple" UriSource="/Images/multiple.png" />
         <BitmapImage x:Key="removetag" UriSource="/Images/removetag.png" />
         <BitmapImage x:Key="addtag" UriSource="/Images/addtag.png" />
+        <BitmapImage x:Key="cross" UriSource="/Images/cross.png" />
         
     </Window.Resources>
 

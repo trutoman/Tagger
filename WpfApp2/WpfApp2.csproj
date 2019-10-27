@@ -136,9 +136,6 @@
     <Resource Include="Images\verification.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\delete.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Images\tag.png" />
   </ItemGroup>
   <ItemGroup>
