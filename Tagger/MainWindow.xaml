@@ -1,0 +1,457 @@
+﻿<Window x:Class="WpfApp2.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp2"
+        mc:Ignorable="d"
+        Title="Tagger" Height="530" Width="1040">
+
+    <Window.Resources>
+
+        <DataTemplate x:Key="smallTags">
+            <Grid Background="{x:Null}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="20" />
+                </Grid.RowDefinitions>
+                <Button Grid.Column="0" Grid.Row="0" Height="30" Width="30" MouseDoubleClick="Button_MouseDoubleClick" >
+                    <Image Source="{Binding image}" Cursor="Hand"/>
+                </Button>
+                <Label Cursor="Hand" Grid.Column="0" Grid.Row="1" Content="{Binding name, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="6" Padding="0" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+            </Grid>
+        </DataTemplate>
+
+        <BitmapImage x:Key="folder" UriSource="/Images/folder.png" />
+        <BitmapImage x:Key="save" UriSource="/Images/save.png" />
+        <BitmapImage x:Key="filter" UriSource="/Images/filter.png" />
+        <BitmapImage x:Key="copy" UriSource="/Images/copy.png" />
+        <BitmapImage x:Key="paste" UriSource="/Images/paste.png" />
+        <BitmapImage x:Key="multiple" UriSource="/Images/multiple.png" />
+        <BitmapImage x:Key="removetag" UriSource="/Images/removetag.png" />
+        <BitmapImage x:Key="addtag" UriSource="/Images/addtag.png" />
+        <BitmapImage x:Key="cross" UriSource="/Images/cross.png" />
+        
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="88" />
+            <RowDefinition Height="247*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Column="0" Grid.Row="0" Margin="16,10,0,0" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="50" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="55" />
+                <RowDefinition Height="20"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+
+                <StackPanel.Resources>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Margin" Value="0,5,5,0"/>
+                    </Style>
+                </StackPanel.Resources>
+
+                <Button x:Name="search_dir_button" VerticalAlignment="Top" Click="Search_Dir_Button_Click"  Height="41" Width="45" HorizontalAlignment="Left"  VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                    <Image Source="{StaticResource folder}" Cursor="Hand"  />
+                </Button>
+
+                <Button x:Name="SaveConfigurationButton"  VerticalAlignment="Top" Click="SaveConfigurationButtonClick" Height="41" Width="45" HorizontalAlignment="Left" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                    <Image Source="{StaticResource save}" Cursor="Hand" Margin="2" />
+                </Button>
+
+                <Button x:Name="applyFilter" Grid.Column="1" Grid.Row="0" Click="AddTagbutton_Click"  Height="41" Width="45" HorizontalAlignment="Left" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Top">
+                    <Image Source="{StaticResource filter}" Cursor="Hand"/>
+                </Button>
+
+            </StackPanel>
+
+            <Label Grid.Column="0" Grid.Row="1" Grid.RowSpan="2" x:Name="labelrootpath" Content="" Height ="17" Width="500" BorderThickness="1"  FontSize="11" Padding="0"  UseLayoutRounding="True"  Background="{x:Null}"/>
+
+        </Grid>
+
+        <ListView Grid.Column="0" Grid.Row="1" x:Name="listboxRoot" ItemsSource="{Binding fileList}" Margin="16,5,5,5" Background="White" SelectedItem="{Binding Path=selectedFile}" MouseDoubleClick="ListboxRoot_MouseDoubleClick" SelectionMode="Extended" SelectionChanged="ListboxRoot_SelectionChanged">
+
+            <ListView.InputBindings>
+                <KeyBinding Key="Delete" Command="{Binding SomeCommand}"/>
+            </ListView.InputBindings>
+            
+            <ListView.View>
+                <GridView>
+                    <GridView.Columns>
+
+                        <GridViewColumn Width="300">
+
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="name" Click="lvUsersColumnHeader_Click">Name</GridViewColumnHeader>
+                            </GridViewColumn.Header>
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+
+                                    <TextBlock Text="{Binding name}">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding tagged}" Value="True">
+                                                        <Setter Property="FontWeight" Value="Bold"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Width="120" DisplayMemberBinding="{Binding dir}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="dir" Click="lvUsersColumnHeader_Click">Dir</GridViewColumnHeader>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+
+                        <GridViewColumn Width="60" DisplayMemberBinding="{Binding size}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="size" Click="lvUsersColumnHeader_Click">Size</GridViewColumnHeader>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+
+
+
+                    </GridView.Columns>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <GridSplitter Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" Grid.RowSpan="4" Width="3"/>
+
+        <GridSplitter Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" Height="3"  HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+
+        <Grid Grid.Column="2" Grid.Row="0" Grid.RowSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <ListBox Grid.Column="0" Grid.Row="0"  x:Name="tagImageList" ItemsSource="{Binding Source=tagList}" SelectedItem="{Binding Path=selectedTag}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="5,5,16,5" >
+
+                <ListBox.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.Panel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel Orientation="Vertical" />
+                            </ItemsPanelTemplate>
+                        </GroupStyle.Panel>
+                        <GroupStyle.ContainerStyle>
+                            <Style TargetType="{x:Type GroupItem}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate>
+                                            <Expander Padding="0" BorderThickness="0" Header="{Binding Name}" FontSize="23" IsExpanded="True">
+                                                <ItemsPresenter/>
+                                            </Expander>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </GroupStyle.ContainerStyle>
+                    </GroupStyle>
+                </ListBox.GroupStyle>
+
+                <!--// Truco para que itemselected cambie bien, no lo entiendo pero funciona-->
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsKeyboardFocusWithin, RelativeSource={RelativeSource Self}}" Value="True">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(ListBoxItem.IsSelected)">
+                                                <DiscreteBooleanKeyFrame KeyTime="0" Value="True"/>
+                                            </BooleanAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Background="{x:Null}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="20" />
+                            </Grid.RowDefinitions>
+                            <Button Grid.Column="0" Tag="tagtag" Grid.Row="0" Height="77" Width="77"  MouseDoubleClick="TagStoreButton_MouseDoubleClick" Margin="0" Padding="0">
+                                <Image Source="{Binding image}" Cursor="Hand"/>
+                            </Button>
+                            <Label Cursor="Hand" Grid.Column="0" Grid.Row="1" Content="{Binding name, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" Padding="0" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel IsItemsHost="True" Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+
+            </ListBox>
+
+            <Slider Grid.Column="0" Grid.Row="1" x:Name="slider" VerticalAlignment="Top" Cursor="Hand" Minimum="30" Maximum="120" Value="75" ValueChanged="Slider_ValueChanged" Background="{x:Null}"/>
+
+        </Grid>
+
+        <Grid Name="filetagsGrid" Grid.Column="0" Grid.Row="3" Margin="16,5,5,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="60" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60*" />
+            </Grid.RowDefinitions>
+
+            <ListBox Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="1" x:Name="actualTagsGrid" ItemsSource="{Binding Path=selectedFile.filetags}" SelectedItem="{Binding Path=actualselectedTag}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Background="{x:Null}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="20" />
+                            </Grid.RowDefinitions>
+                            <Button Grid.Column="0" Grid.Row="0" Height="70" Width="70" MouseDoubleClick="Button_MouseDoubleClick" Tag="filefile">
+                                <Image Source="{Binding image}" Cursor="Hand"/>
+                            </Button>
+                            <Label Cursor="Hand" Grid.Column="0" Grid.Row="1" Content="{Binding name, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" Padding="0" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel IsItemsHost="True" Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+
+            </ListBox>
+
+            <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <StackPanel.Resources>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Margin" Value="5,5,0,0"/>
+                    </Style>
+                </StackPanel.Resources>
+                <Button x:Name="copyTagButton" VerticalAlignment="Center" Height="41" Width="45" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Click="CopyTagButton_Click">
+                    <Image Source="{StaticResource copy}" Cursor="Hand" Margin="1"/>
+                </Button>
+                <Button  x:Name="pasteTagButton" VerticalAlignment="Center"  Height="41" Width="45" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="False" Click="PasteTagButton_Click">
+                    <Image Source="{StaticResource paste}" Cursor="Hand" IsEnabled="False" Margin="1" />
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <TabControl Name="Tabs1" Grid.Column="2" Grid.Row="3" Margin="5,5,16,16">
+            <TabItem Name="file">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{StaticResource multiple}" Width="25" Height="25" Margin="0,0,8,0"/>
+                        <TextBlock Text="Edit tags" VerticalAlignment="Center" />
+                    </StackPanel>
+                </TabItem.Header>
+
+                <Grid >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <!--<ListBox x:Name="TaglistBox" Grid.Column="0" Grid.Row="0" DisplayMemberPath="name" ItemsSource="{Binding Path=tagList}" SelectedItem="{Binding Path=selectedTag}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>-->
+                    <Grid Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="50"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                        </Grid.RowDefinitions>
+
+
+                        <!--<Grid Grid.Column="0" Grid.Row="0" RowSpan="3" VerticalAlignment="Top">
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"  />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Label Grid.Column="0" Grid.Row="0" x:Name="goesto" Content="Tag goes to..." HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" FontSize="14" FontWeight="Bold"/>
+
+                            <RadioButton  Grid.Column="0" Grid.Row="1" GroupName="goes" VerticalAlignment="Top" FontSize="16" VerticalContentAlignment="Center">
+                                <WrapPanel>
+                                    <Image Source="filter.png" Width="16" Height="16" Margin="0,0,8,0"/>
+                                    <TextBlock Text="Filter" FontSize="20" Margin="0,0,8,0"/>
+                                </WrapPanel>
+                            </RadioButton>
+
+                            <RadioButton Grid.Column="0" Grid.Row="2" GroupName="goes" IsChecked="True"  VerticalAlignment="Top" FontSize="16" VerticalContentAlignment="Center">
+                                <WrapPanel>
+                                    <Image Source="tag.png" Width="16" Height="16" Margin="0,0,8,0"/>
+                                    <TextBlock Text="File" FontSize="20" Margin="0,0,8,0"/>
+                                </WrapPanel>
+                            </RadioButton>
+
+                        </Grid>-->
+
+                        <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" BorderThickness="1" BorderBrush="Black">
+                            <Image Name="previewTagImage" Source="{Binding selectedTag.image}" Height="90" Width="90" OpacityMask="Black"/>
+                        </Border>
+                        <Label Grid.Column="1" Grid.Row="0" x:Name="label" Content="Name" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="2"/>
+                        <TextBox Grid.Column="2" Grid.Row="0"  x:Name="Tag_Name_Textbox" AcceptsReturn="false" Text="{Binding selectedTag.name, Mode=OneWay}" TextWrapping="Wrap" TextChanged="Tag_Name_Textbox_TextChanged" VerticalContentAlignment="Center" Margin="2" UseLayoutRounding="True"/>
+
+                        <Label Grid.Column="1" Grid.Row="1" x:Name="label_Copy1" Content="Group" Margin="2"/>
+                        <TextBox Grid.Column="2" Grid.Row="1" x:Name="Tag_Name_Group" AcceptsReturn="false" Text="{Binding selectedTag.group, Mode=OneWay}" TextWrapping="Wrap" TextChanged="Tag_Name_Textbox_TextChanged" Margin="2" VerticalContentAlignment="Center"/>
+
+                        <Label Grid.Column="1" Grid.Row="2" x:Name="label_Copy" Content="Image" Margin="2" HorizontalAlignment="Left" />
+
+                        <Grid Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="50" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox x:Name="Tag_Image_Textbox" AcceptsReturn="false" Text="{Binding selectedTag.image, Mode=TwoWay}"  TextWrapping="NoWrap" TextChanged="Tag_Name_Textbox_TextChanged" Margin="2" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center"/>
+
+                            <Button x:Name="search_image_button" Click="Search_Image_Button_Click" Margin="2" HorizontalAlignment="Right"  VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                                <Image Source="{StaticResource folder}" Cursor="Hand"/>
+                            </Button>
+
+                        </Grid>
+
+                        <StackPanel Grid.Column="4" Grid.Row="0" Grid.RowSpan="3" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                            <Button x:Name="okTagButton" Click="AddTagbutton_Click" Margin="2" HorizontalAlignment="Right" Height="41" Width="45" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                                <Image Source="{StaticResource addtag}" Cursor="Hand"/>
+                            </Button>
+
+                            <Button x:Name="removeTagbutton" Click="RemoveTagbutton_Click" Margin="2" HorizontalAlignment="Right" Height="41" Width="45" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                                <Image Source="{StaticResource removetag}" Cursor="Hand" VerticalAlignment="Top"/>
+                            </Button>
+
+                        </StackPanel>
+
+                    </Grid>
+
+                </Grid>
+
+            </TabItem>
+
+            <TabItem Name="filter">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{StaticResource filter}" Width="25" Height="25" Margin="0,0,8,0"/>
+                        <TextBlock Text="Edit filter" VerticalAlignment="Center" />
+                    </StackPanel>
+                </TabItem.Header>
+
+                <!--<ListBox x:Name="TaglistBox" Grid.Column="0" Grid.Row="0" DisplayMemberPath="name" ItemsSource="{Binding Path=tagList}" SelectedItem="{Binding Path=selectedTag}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>-->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+
+                    <Grid Grid.Column="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Button Name="andButton" Grid.Column="0" Grid.Row="0" Height="40" Width="42" MouseDoubleClick="Button_MouseDoubleClick" Margin="2" Click="AndButton_Click" >
+                            <TextBlock x:Name="and" TextWrapping="Wrap" Text="AND" FontWeight="Bold" FontSize="17" Cursor="Hand"/>
+                        </Button>
+                        <Button Name="orButton" Grid.Column="0" Grid.Row="1" Height="40" Width="42" MouseDoubleClick="Button_MouseDoubleClick" Margin="2">
+                            <TextBlock x:Name="or" TextWrapping="Wrap" Text="OR" FontWeight="Bold" FontSize="17" Cursor="Hand"/>
+                        </Button>
+                        <Button Name="notButton" Grid.Column="1" Grid.Row="0" Height="40" Width="42" MouseDoubleClick="Button_MouseDoubleClick" Margin="2">
+                            <TextBlock x:Name="not" TextWrapping="Wrap" Text="NOT" FontWeight="Bold" FontSize="17" Cursor="Hand"/>
+                        </Button>
+                        <Button Name="groupButton" Grid.Column="1" Grid.Row="1" Height="40" Width="42" MouseDoubleClick="Button_MouseDoubleClick" Margin="2">
+                            <TextBlock x:Name="group" TextWrapping="Wrap" Text="()" FontWeight="Bold" FontSize="17" Cursor="Hand"/>
+                        </Button>
+                    </Grid>
+                    
+                    <ListBox Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" x:Name="FilterTags" ItemsSource="{Binding Path=filterTags}" SelectedItem="{Binding Path=actualFilter}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Background="{x:Null}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="20" />
+                                    </Grid.RowDefinitions>
+                                    <Button Grid.Column="0" Grid.Row="0" Height="70" Width="70" MouseDoubleClick="Button_MouseDoubleClick" >
+                                        <Image Source="{Binding image}" Cursor="Hand"/>
+                                    </Button>
+                                    <Label Cursor="Hand" Grid.Column="0" Grid.Row="1" Content="{Binding name, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" Padding="0" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel IsItemsHost="True" Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+
+                    </ListBox>
+                </Grid>
+            </TabItem>
+
+        </TabControl>
+
+    </Grid>
+</Window>
