@@ -73,6 +73,9 @@ namespace WpfApp2
         public const int MAX_TAGS = 1024;
         private ObservableCollection<TagStoreElementTag> tagCopiedList = new ObservableCollection<TagStoreElementTag>();
 
+        private bool filterOn = false;
+        private ObservableCollection<FileView> nofilterList = new ObservableCollection<FileView>();
+
         private GridViewColumnHeader listViewSortCol = null;
         private SortAdorner listViewSortAdorner = null;
 
@@ -110,7 +113,7 @@ namespace WpfApp2
                 if (this._direction == ListSortDirection.Ascending)
                     return returnValue;
                 else
-                    return (-1*returnValue);
+                    return (-1 * returnValue);
             }
         }
 
@@ -162,7 +165,7 @@ namespace WpfApp2
             {
                 if (_fileList != value)
                 {
-                    System.Windows.Forms.MessageBox.Show("--Filelist set -----------------");
+                    //System.Windows.Forms.MessageBox.Show("--Filelist set -----------------");
                     _fileList = value;
                     OnPropertyChanged();
                 }
@@ -325,6 +328,51 @@ namespace WpfApp2
             }
         }
 
+        private void ApplyFilter_Click(object sender, RoutedEventArgs e)
+        {
+            ObservableCollection<FileView> filteredList = new ObservableCollection<FileView>(fileList);
+
+            filterOn = !filterOn;
+
+            if (!filterOn)
+            {
+                fileList = nofilterList;
+            }
+            else
+            {
+                foreach (FileView file in fileList)
+                {
+                    if (file.tagged)
+                    {
+                        foreach (TagStoreElementTag tag in filterTags)
+                        {
+                            bool tagFound = false;
+                            foreach (TagStoreElementTag tagName in file.filetags)
+                            {
+                                if (tagName.name == tag.name)
+                                {
+                                    tagFound = true;
+                                    break;
+                                }
+                            }
+
+                            if (!tagFound)
+                            {
+                                filteredList.Remove(file);
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        filteredList.Remove(file);
+                    }
+                }
+
+                fileList = filteredList;
+            }
+        }
+
         private void CheckFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             // check if focus is moving from a ListBoxItem, to a ListBoxItem
@@ -456,6 +504,7 @@ namespace WpfApp2
                 }
 
                 populate_listbox();
+                nofilterList = fileList;
                 RefreshInfo();
             }
             else
@@ -758,6 +807,14 @@ namespace WpfApp2
                     break;
                 }
             }
+            RefreshInfo();
+        }
+
+        private void Filter_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            System.Windows.Controls.Button source_button = (System.Windows.Controls.Button)sender;
+            string name = ((TagStoreElementTag)source_button.DataContext).name;
+            filterTags.Remove((TagStoreElementTag)source_button.DataContext);
             RefreshInfo();
         }
 

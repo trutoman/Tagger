@@ -77,7 +77,7 @@
                     <Image Source="{StaticResource save}" Cursor="Hand" Margin="2" />
                 </Button>
 
-                <Button x:Name="applyFilter" Grid.Column="1" Grid.Row="0" Click="AddTagbutton_Click"  Height="41" Width="45" HorizontalAlignment="Left" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Top">
+                <Button x:Name="applyFilter" Grid.Column="1" Grid.Row="0" Click="ApplyFilter_Click"  Height="41" Width="45" HorizontalAlignment="Left" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Top">
                     <Image Source="{StaticResource filter}" Cursor="Hand"/>
                 </Button>
 
@@ -272,7 +272,7 @@
                     <Image Source="{StaticResource copy}" Cursor="Hand" Margin="1"/>
                 </Button>
                 <Button  x:Name="pasteTagButton" VerticalAlignment="Center"  Height="41" Width="45" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="False" Click="PasteTagButton_Click">
-                    <Image Source="{StaticResource paste}" Cursor="Hand" IsEnabled="False" Margin="1" />
+                    <Image Source="{StaticResource paste}" Cursor="Hand" Margin="1" />
                 </Button>
             </StackPanel>
         </Grid>
@@ -433,7 +433,7 @@
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="20" />
                                     </Grid.RowDefinitions>
-                                    <Button Grid.Column="0" Grid.Row="0" Height="70" Width="70" MouseDoubleClick="Button_MouseDoubleClick" >
+                                    <Button Grid.Column="0" Grid.Row="0" Height="70" Width="70" MouseDoubleClick="Filter_MouseDoubleClick" >
                                         <Image Source="{Binding image}" Cursor="Hand"/>
                                     </Button>
                                     <Label Cursor="Hand" Grid.Column="0" Grid.Row="1" Content="{Binding name, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" Padding="0" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
