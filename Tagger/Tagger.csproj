@@ -74,7 +74,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="TaggerConfiguration.cs" />
+    <Compile Include="Core\Commands\ParamCommand.cs" />
+    <Compile Include="Core\Commands\RelayCommand.cs" />
+    <Compile Include="Core\IEnlace.cs" />
+    <Compile Include="Core\IGeneric.cs" />
+    <Compile Include="Model\TaggerInstance.cs" />
+    <Compile Include="Model\TagViewCollection.cs" />
+    <Compile Include="Model\FileViewCollection.cs" />
+    <Compile Include="Model\Services\TaggerConfiguration.cs" />
+    <Compile Include="ViewModel\InstanceViewModel.cs" />
+    <Compile Include="View\TaggerMainWindow.xaml.cs">
+      <DependentUpon>TaggerMainWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -83,10 +94,20 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ViewModel\FilesViewModel.cs" />
+    <Compile Include="ViewModel\TagsViewModel.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\TaggerMainWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ViewElements\ToggleButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -168,9 +189,6 @@
   <ItemGroup>
     <Resource Include="Images\cross.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Model\" />
-    <Folder Include="ViewModel\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
